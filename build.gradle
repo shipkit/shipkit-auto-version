@@ -18,8 +18,8 @@ dependencies {
 gradlePlugin {
     plugins {
         greeting {
-            id = 'org.shipkit.smart.versioning.greeting'
-            implementationClass = 'org.shipkit.smart.versioning.SmartVersioningPlugin'
+            id = 'org.shipkit.auto.version'
+            implementationClass = 'org.shipkit.auto.version.AutoVersionPlugin'
         }
     }
 }
@@ -33,13 +33,12 @@ sourceSets {
 gradlePlugin.testSourceSets(sourceSets.functionalTest)
 configurations.functionalTestImplementation.extendsFrom(configurations.testImplementation)
 
-// Add a task to run the functional tests
-task functionalTest(type: Test) {
+task integTest(type: Test) {
     testClassesDirs = sourceSets.functionalTest.output.classesDirs
     classpath = sourceSets.functionalTest.runtimeClasspath
 }
 
 check {
-    // Run the functional tests as part of `check`
-    dependsOn(tasks.functionalTest)
+    dependsOn(tasks.integTest)
 }
+        
