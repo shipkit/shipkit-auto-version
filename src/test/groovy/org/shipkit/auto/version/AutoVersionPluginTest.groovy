@@ -7,11 +7,13 @@ class AutoVersionPluginTest extends Specification {
 
     def project = ProjectBuilder.builder().build()
 
-    def "plugin gets applied"() {
+    def "no wildcard in version file"() {
+        project.file("version.properties") << "version=1.5.0-SNAPSHOT"
+
         when:
         project.plugins.apply(AutoVersionPlugin)
 
         then:
-        project.version == "1.0.1"
+        project.version == "1.5.0-SNAPSHOT"
     }
 }

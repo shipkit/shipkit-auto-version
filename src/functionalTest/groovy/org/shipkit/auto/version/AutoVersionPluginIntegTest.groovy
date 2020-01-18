@@ -17,7 +17,7 @@ class AutoVersionPluginIntegTest extends Specification {
     }
 
     def "runs task"() {
-        file("version.properties") << "version=1.0.*"
+        file("version.properties") << "version=1.0.1"
         file("build.gradle") << """
             task showVersion { doLast { println "version: " + project.version }}
         """
