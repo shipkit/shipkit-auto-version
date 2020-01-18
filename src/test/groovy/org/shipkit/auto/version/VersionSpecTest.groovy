@@ -1,75 +1,50 @@
 package org.shipkit.auto.version
 
-import org.junit.Rule
-import org.junit.rules.TemporaryFolder
-import spock.lang.Specification
 
-class VersionSpecTest extends Specification {
+import static VersionSpec.readVersionSpec
 
-    @Rule TemporaryFolder tmp = new TemporaryFolder()
-
-    File file(String content) {
-        def f = tmp.newFile()
-        f << content
-        f
-    }
+class VersionSpecTest extends TmpFolderSpecification {
 
     def "loads spec from file"() {
         expect:
-        new VersionSpec(file(spec)).wildcard == wildcard
-
-        where:
-        spec                        | wildcard
-        "version=1.0.0"             | false
-        "version=1.0.*"             | true
-    }
-
-    def "supported formats"() {
-        expect:
-        VersionSpec.validVersion(spec).matches() == ok
-
-        where:
-        spec                | ok
-        "1.0.0"             | true
-        "1.0.0-SNAPSHOT"    | true
-        "1.0.0-beta.1"      | true
-        "1.0.0-RC.1"        | true
-        "1.0.0.x.y.z"       | true
-        "1.0.*"             | true
-
-        "1.2"               | false
-        "1.2.foo"           | false
-        "1.0.*-SNAPSHOT"    | false
-        "1.0.*-beta.1"      | false
-        "1.0.0-beta.*"      | false //TODO: potentially support in the future
+        readVersionSpec(writeFile("version=1.0.*")) == "1.0.*"
     }
 
     def "no file"() {
         when:
-        new VersionSpec(new File("missing file"))
+        readVersionSpec(new File("missing file"))
 
         then:
         def e = thrown(RuntimeException)
-        e.message == "'org.shipkit.auto.version' plugin requires this file: missing file"
+        e.message == "Problems deducting the version automatically. Missing file: missing file"
+        e.cause != null
     }
 
     def "bad format"() {
-        def f = file("noversion=missing")
+        def f = writeFile("noversion=missing")
 
         when:
-        new VersionSpec(f)
+        readVersionSpec(f)
 
         then:
-        def e = thrown(VersionSpec.IncorrectVersionFile)
-        e.message == "'org.shipkit.auto.version' expects correct 'version' property in file: " + f + "\n" +
+        def e = thrown(VersionSpec.MissingVersionKey)
+        e.message == "Problems deducting the version automatically. Expected correct 'version' property in file: " + f + "\n" +
                 "Correct examples: 'version=1.0.*', 'version=2.10.100'"
     }
 
     def "bad version format"() {
+        def f = writeFile("version=" + spec)
+
         when:
-        new VersionSpec(file('1.2.foo'))
+        readVersionSpec(f)
 
         then:
-        thrown(VersionSpec.IncorrectVersionFile)
+        def e = thrown(VersionSpec.IncorrectVersionFormat)
+        e.message == "Problems deducting the version automatically. Expected correct 'version' property in file: " + f + "\n" +
+                "Correct examples: 'version=1.0.*', 'version=2.10.100'"
+        e.cause != null
+
+        where:
+        spec << ["foo.version", "1.2", "1.2.**", "1.*.*", "1.0.0-beta.*"]
     }
 }

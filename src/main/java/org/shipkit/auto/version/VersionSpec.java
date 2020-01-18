@@ -1,65 +1,60 @@
 package org.shipkit.auto.version;
 
+import com.github.zafarkhaja.semver.Version;
+
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.Properties;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 /**
- * Models the content of version file.
+ * Loads the version spec from 'version.properties' file, implements error handling.
  */
 class VersionSpec {
 
-    private final String versionSpec;
-    private final boolean wildcard;
+    private static String ERROR = "Problems deducting the version automatically.";
 
-    VersionSpec(File versionFile) {
+    static String readVersionSpec(File versionFile) {
         Properties p = new Properties();
         try {
             p.load(new FileReader(versionFile));
         } catch (IOException e) {
-            throw new RuntimeException("'org.shipkit.auto.version' plugin requires this file: " + versionFile, e);
+            throw new RuntimeException(ERROR + " Missing file: " + versionFile, e);
         }
 
         Object v = p.get("version");
         if (!(v instanceof String)) {
-            throw new IncorrectVersionFile(versionFile);
+            throw new MissingVersionKey(versionFile);
         }
-        this.versionSpec = (String) v;
-        Matcher matcher = validVersion(versionSpec);
-        boolean matches = matcher.matches();
-        if (!matches) {
-            throw new IncorrectVersionFile(versionFile);
+        String versionSpec = (String) v;
+
+        if (versionSpec.matches("\\d+.\\d+.(\\*)")) {
+            return versionSpec;
         }
-        String patchVersion = matcher.group(1);
-        wildcard = patchVersion.equals("*");
-    }
 
-    static Matcher validVersion(String versionSpec) {
-        Pattern pattern = Pattern.compile("\\d+\\.\\d+\\.((\\*)|((\\d)+[-\\.\\w]*))");
-        return pattern.matcher(versionSpec);
-    }
-
-    static class IncorrectVersionFile extends RuntimeException {
-        IncorrectVersionFile(File versionFile) {
-            super("'org.shipkit.auto.version' expects correct 'version' property in file: " + versionFile + "\n" +
-                    "Correct examples: 'version=1.0.*', 'version=2.10.100'");
+        try {
+            Version.valueOf(versionSpec);
+        } catch (Exception e) {
+            throw new IncorrectVersionFormat(versionFile, e);
         }
-    }
 
-    /**
-     * whether there is wildcard version in the spec, e.g. '1.0.*'
-     */
-    boolean isWildcard() {
-        return wildcard;
-    }
-
-    /**
-     * the exact spec, as in version file.
-     */
-    String getSpec() {
         return versionSpec;
+    }
+
+    private static String exceptionMessage(File versionFile) {
+        return "Problems deducting the version automatically. Expected correct 'version' property in file: " + versionFile + "\n" +
+                "Correct examples: 'version=1.0.*', 'version=2.10.100'";
+    }
+
+    static class MissingVersionKey extends RuntimeException {
+        MissingVersionKey(File versionFile) {
+            super(exceptionMessage(versionFile));
+        }
+    }
+
+    static class IncorrectVersionFormat extends RuntimeException {
+        IncorrectVersionFormat(File versionFile, Exception e) {
+            super(exceptionMessage(versionFile), e);
+        }
     }
 }

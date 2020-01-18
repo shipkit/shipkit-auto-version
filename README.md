@@ -1,13 +1,30 @@
 # org.shipkit.auto.version Gradle plugin
 
 This plugin deducts the version for the Gradle project to streamline continuous delivery.
-Configure your project with version like `1.0.*`.
+You drop a ```version.properties``` file to your repo with content like `version=1.0.*`. 
 The plugin will resolve the `*` part of the version based on the latest release tag and commits.
-This way you can set up the project for continuous delivery without the infamous "version bump" commits.
+This way you can set up the project for continuous delivery and release every merged pull request with nicely incremented version. 
+No more infamous "version bump" commits in every release!
 
-Discussion about this use case: https://github.com/mockito/shipkit/issues/395
+This plugin is **tiny** and has a single dependency on https://github.com/zafarkhaja/jsemver.
+It is a safe dependency - it is also tiny and does not bring any transitive dependencies.
 
-This plugin is **tiny** and does not have any dependencies.
+## Other plugins
+
+There are other plugins out there that are similar:
+
+1. Below 2 plugins are great but they require to push a tag to make a release.
+Our plugin can release every change. 
+ - https://github.com/ajoberstar/reckon
+ - https://github.com/allegro/axion-release-plugin
+ 
+2. Below plugin can release every change but the resulting version is not as nice (e.g. ```1.0.0+3bb4161```).
+The plugin has many features and thus is much more complex than our plugin.  
+ - https://github.com/tschulte/gradle-semantic-release-plugin
+
+Use the plugin that works best for you and push every change to production!
+
+Discussion about this use case: https://github.com/mockito/shipkit/issues/395 
 
 ## Usage
 
