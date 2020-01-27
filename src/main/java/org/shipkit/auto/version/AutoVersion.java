@@ -44,7 +44,7 @@ class AutoVersion {
         Version tag = nearest.get();
 
         gitOutput = runner.run("git", "log", "--pretty=oneline", "v" + tag + "..master");
-        int commitCount = new CommitCounter().commitDelta(gitOutput);
+        int commitCount = new CommitCounter().countCommitDelta(gitOutput);
 
         Version result = Version.forIntegers(
                 tag.getMajorVersion(), tag.getMinorVersion(), tag.getPatchVersion() + commitCount);

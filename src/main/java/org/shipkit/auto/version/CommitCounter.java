@@ -13,14 +13,19 @@ class CommitCounter {
      *
      * @param gitOutput - output from "git log --pretty=oneline" command
      */
-    int commitDelta(String gitOutput) {
+    int countCommitDelta(String gitOutput) {
         gitOutput = gitOutput.trim();
-        int result = (int) new Scanner(gitOutput).findAll(" Merge pull request #\\d+ from ").count();
+        //need to subtract 1 because we are matching substring (e.g. there is always text before and after the
+        int result = countOccurrences(gitOutput, " Merge pull request #\\d+ from ") - 1;
         if (result != 0) {
             return result;
         }
 
-        result = gitOutput.split(System.lineSeparator()).length;
+        result = countOccurrences(gitOutput, System.lineSeparator());
         return max(result, 1);
+    }
+
+    private static int countOccurrences(String input, String pattern) {
+        return input.split(pattern).length;
     }
 }

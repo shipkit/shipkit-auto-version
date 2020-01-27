@@ -7,7 +7,7 @@ class AutoVersionPluginTest extends Specification {
 
     def project = ProjectBuilder.builder().build()
 
-    //This test should remain super simple to e2e test the happy path.
+    //This test should remain super simple to e2e test the happy path, and *not* depend on Gradle API.
     //Don't add new e2e test methods or complicate the setup/test data.
     //New functionalities should be unit tested in other, lower-level tests.
     def "e2e test"() {
@@ -29,7 +29,6 @@ class AutoVersionPluginTest extends Specification {
         runner.run("git", "merge", "PR-10", "--no-ff", "-m", "Merge pull request #10 from ...")
 
         expect:
-        new AutoVersion(project.projectDir).deductVersion() == "1.0.3"
-        //TODO, implement smarter commit counting so that version above can be 1.0.1
+        new AutoVersion(project.projectDir).deductVersion() == "1.0.1"
     }
 }
