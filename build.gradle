@@ -5,6 +5,9 @@ plugins {
     id 'maven-publish'
 }
 
+group = "org.shipkit"
+version = "0.0.1"
+
 sourceCompatibility = 1.8
 
 repositories {
@@ -26,6 +29,15 @@ gradlePlugin {
         greeting {
             id = 'org.shipkit.auto.version'
             implementationClass = 'org.shipkit.auto.version.AutoVersionPlugin'
+        }
+    }
+}
+
+publishing { // docs: https://docs.gradle.org/current/userguide/publishing_maven.html
+    publications {
+        //Run this for local testing: "./gradlew publishMavenPublicationToMavenLocal"
+        maven(MavenPublication) {
+            artifact jar
         }
     }
 }
