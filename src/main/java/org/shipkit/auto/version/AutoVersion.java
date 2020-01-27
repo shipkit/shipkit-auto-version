@@ -42,8 +42,10 @@ class AutoVersion {
 
         //since there is a matching nearest tag we will count the commits to resolve wildcard
         Version tag = nearest.get();
-        gitOutput = runner.run("git", "rev-list", "--count", "v" + tag + "..master");
-        int commitCount = parseInt(gitOutput.trim());
+
+        gitOutput = runner.run("git", "log", "--pretty=oneline", "v" + tag + "..master");
+        int commitCount = new CommitCounter().commitDelta(gitOutput);
+
         Version result = Version.forIntegers(
                 tag.getMajorVersion(), tag.getMinorVersion(), tag.getPatchVersion() + commitCount);
 

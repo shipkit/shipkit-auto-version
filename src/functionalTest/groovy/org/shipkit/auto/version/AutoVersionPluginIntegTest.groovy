@@ -5,6 +5,9 @@ import org.junit.Rule
 import org.junit.rules.TemporaryFolder
 import spock.lang.Specification
 
+/**
+ * Only smoke test, forever! Don't add more tests here, instead cover the complexity in lower level unit tests.
+ */
 class AutoVersionPluginIntegTest extends Specification {
 
     @Rule TemporaryFolder tmp = new TemporaryFolder()
@@ -16,7 +19,7 @@ class AutoVersionPluginIntegTest extends Specification {
         """
     }
 
-    def "runs task"() {
+    def "uses explicit version declared in the version file"() {
         file("version.properties") << "version=1.0.1"
         file("build.gradle") << """
             task showVersion { doLast { println "version: " + project.version }}
