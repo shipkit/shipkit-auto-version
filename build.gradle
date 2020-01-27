@@ -2,7 +2,10 @@ plugins {
     id 'java-gradle-plugin'
     id 'groovy'
     id 'idea'
+    id 'maven-publish'
 }
+
+sourceCompatibility = 1.8
 
 repositories {
     jcenter()
@@ -27,21 +30,4 @@ gradlePlugin {
     }
 }
 
-// Add a source set for the functional test suite
-sourceSets {
-    functionalTest {
-    }
-}
-
-gradlePlugin.testSourceSets(sourceSets.functionalTest)
-configurations.functionalTestImplementation.extendsFrom(configurations.testImplementation)
-
-task integTest(type: Test) {
-    testClassesDirs = sourceSets.functionalTest.output.classesDirs
-    classpath = sourceSets.functionalTest.runtimeClasspath
-}
-
-check {
-    dependsOn(tasks.integTest)
-}
-        
+apply from: "$rootDir/gradle/integ-test.gradle"

@@ -1,0 +1,16 @@
+sourceSets {
+    functionalTest {
+    }
+}
+
+gradlePlugin.testSourceSets(sourceSets.functionalTest)
+configurations.functionalTestImplementation.extendsFrom(configurations.testImplementation)
+
+task integTest(type: Test) {
+    testClassesDirs = sourceSets.functionalTest.output.classesDirs
+    classpath = sourceSets.functionalTest.runtimeClasspath
+}
+
+check {
+    dependsOn(tasks.integTest)
+}
