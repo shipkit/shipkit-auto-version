@@ -15,7 +15,7 @@ class AutoVersionPluginIntegTest extends Specification {
     def setup() {
         file("settings.gradle")
         file("build.gradle") << """
-            plugins {  id('org.shipkit.auto.version')}
+            plugins {  id('org.shipkit.shipkit-auto-version')}
         """
     }
 
