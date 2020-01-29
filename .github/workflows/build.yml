@@ -1,0 +1,20 @@
+name: CI
+
+on: [push, pull_request]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2   # docs: https://github.com/actions/checkout
+    - name: Run build
+      run: ./gradlew build --info --continue      
+    - name: Deploy to plugins.gradle.org
+      if: success() && github.event_name == 'push(TODO-remove)' && github.ref == 'refs/heads/master'
+      run: ./gradlew publishPlugins --info
+      env: 
+          # Gradle env variables docs: https://docs.gradle.org/current/userguide/build_environment.html#sec:gradle_environment_variables
+          ORG_GRADLE_PROJECT_gradle.publish.key: ${{ secrets.GRADLE_PUBLISH_KEY }}
+          ORG_GRADLE_PROJECT_gradle.publish.secret: ${{ secrets.GRADLE_PUBLISH_SECRET }}
