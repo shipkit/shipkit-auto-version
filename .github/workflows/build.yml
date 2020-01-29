@@ -12,6 +12,7 @@ jobs:
     - name: Run build
       run: ./gradlew build --info --continue      
     - name: Deploy to plugins.gradle.org
+      # below is work in progress, to enable second step remove TODO from below
       if: success() && github.event_name == 'push(TODO-remove)' && github.ref == 'refs/heads/master'
       run: ./gradlew publishPlugins --info
       env: 
