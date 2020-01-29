@@ -1,4 +1,4 @@
-# org.shipkit.auto-version Gradle plugin
+# org.shipkit.shipkit-auto-version Gradle plugin
 
 This plugin deducts the version for the Gradle project to streamline continuous delivery.
 You drop a ```version.properties``` file to your repo with content like `version=1.0.*`. 
