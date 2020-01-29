@@ -27,8 +27,7 @@ dependencies {
 gradlePlugin {
     plugins {
         greeting {
-            //TODO rename to "org.shipkit.shipkit-auto-version" and make the project/jar consistent
-            id = 'org.shipkit.auto.version'
+            id = 'org.shipkit.shipkit-auto-version'
             implementationClass = 'org.shipkit.auto.version.AutoVersionPlugin'
         }
     }
