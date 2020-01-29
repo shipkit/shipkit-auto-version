@@ -16,6 +16,9 @@ class AutoVersionPluginTest extends Specification {
 
         //prepare repo
         runner.run("git", "init")
+        runner.run("git", "config", "user.email", "dummy@testing.com")
+        runner.run("git", "config", "user.name", "Dummy For Testing")
+
         runner.run("git", "add", "*")
         runner.run("git", "commit", "-a", "-m", "initial")
         runner.run("git", "tag", "v1.0.0")
