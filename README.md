@@ -1,4 +1,6 @@
-# org.shipkit.shipkit-auto-version Gradle plugin
+![CI](https://github.com/shipkit/org.shipkit.shipkit-auto-version/workflows/CI/badge.svg)
+
+# Shipkit auto-version Gradle plugin
 
 This plugin deducts the version for the Gradle project to streamline continuous delivery.
 You drop a ```version.properties``` file to your repo with content like `version=1.0.*`. 
