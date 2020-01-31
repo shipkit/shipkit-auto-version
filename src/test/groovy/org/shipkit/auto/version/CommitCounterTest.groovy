@@ -4,7 +4,7 @@ import spock.lang.Specification
 
 class CommitCounterTest extends Specification {
 
-    def "counts merge commits on a realistic output"() {
+    def "merge commits on a realistic output"() {
         expect:
         4 == new CommitCounter().countCommitDelta("""
 2994de4df (HEAD -> release/3.x, origin/release/3.x) Merge pull request #1863 from bric3/gradle-wrapper-validation-action
@@ -18,7 +18,17 @@ b0d15d114 Improved the test coverage
 """)
     }
 
-    def "counts merge commits"() {
+    def "a non-merge commit on top of merge commits"() {
+        //this is when a commit is pushed directly to master, without PR
+        expect:
+        2 == new CommitCounter().countCommitDelta("""
+64e7eb517 Commit without a PR
+2994de4df (HEAD -> release/3.x, origin/release/3.x) Merge pull request #1863 from bric3/gradle-wrapper-validation-action
+67bd4e96c Adds the Official Gradle Wrapper Validation GitHub Action
+""")
+    }
+
+    def "merge commits"() {
         expect:
         2 == new CommitCounter().countCommitDelta("""
 084e8af18 Merge pull request #1849 from dreis2211/gh-1848
@@ -26,7 +36,7 @@ ce1632ddd Merge pull request #1847 from andreisilviudragnea/fix-unused-stubbing-
 """)
     }
 
-    def "counts commits even if there are no merge commits"() {
+    def "few commits but no merge commits"() {
         expect:
         2 == new CommitCounter().countCommitDelta("""
 67bd4e96c Adds the Official Gradle Wrapper Validation GitHub Action

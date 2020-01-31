@@ -1,31 +1,59 @@
 package org.shipkit.auto.version;
 
-import java.util.Scanner;
+import java.util.regex.Pattern;
 
 import static java.lang.Integer.max;
 
 class CommitCounter {
 
     /**
-     * Counts merge commits based on git output.
-     * If no merge commits, counts every commit.
-     * If no commits returns 1 (it's easier for consumers this way).
+     * Counts merge commits based on git output. Use cases:
+     *
+     * <p>
+     *
+     * a) 2 merge commits - result: 2
+     * <pre>
+     *   merge commit a
+     *      commit a.1
+     *      commit a.2
+     *   merge commit b
+     *      commit b.1
+     *      commit b.2
+     * </pre>
+     *
+     * b) commit on top of merge commit - result: 3
+     * <pre>
+     *   commit x
+     *   merge commit a
+     *      commit a.1
+     *   merge commit b
+     *      commit b.1
+     * </pre>
+     *
+     * c) no merge commits - result: 2
+     * <pre>
+     *   commit 1
+     *   commit 2
+     * </pre>
+     *
+     * d) no commits - result: 1 - this way it's easier for consumers
      *
      * @param gitOutput - output from "git log --pretty=oneline" command
      */
     int countCommitDelta(String gitOutput) {
         gitOutput = gitOutput.trim();
-        //need to subtract 1 because we are matching substring (e.g. there is always text before and after the
-        int result = countOccurrences(gitOutput, " Merge pull request #\\d+ from ") - 1;
-        if (result != 0) {
-            return result;
+        String[] lines = gitOutput.split(System.lineSeparator());
+        Pattern pattern = Pattern.compile(".* Merge pull request #\\d+ from .*");
+        int commits = 0;
+        int mergeCommits = 0;
+        for (int i = lines.length-1; i >= 0; i--) {
+            String line = lines[i];
+            commits++;
+            if (pattern.matcher(line).matches()) {
+                mergeCommits++;
+                commits = 0; //reset so that we focus on merge commits
+            }
         }
-
-        result = countOccurrences(gitOutput, System.lineSeparator());
-        return max(result, 1);
-    }
-
-    private static int countOccurrences(String input, String pattern) {
-        return input.split(pattern).length;
+        return max(mergeCommits + commits, 1);
     }
 }
