@@ -10,7 +10,6 @@ plugins {
 println "Building version $version"
 
 group = "org.shipkit"
-version = "0.0.1"
 
 sourceCompatibility = 1.8
 
