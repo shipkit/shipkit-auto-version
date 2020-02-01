@@ -10,9 +10,10 @@ jobs:
     steps:
     - uses: actions/checkout@v2   # docs: https://github.com/actions/checkout
     - name: Run build
-      run: ./gradlew build -i --scan --continue      
+      run: git tag
+#      run: ./gradlew build -i --scan --continue
     - name: Deploy to plugins.gradle.org
-      if: success() && github.event_name == 'push' && github.ref == 'refs/heads/master'
+      if: success() && github.event_name == 'pushxxx' && github.ref == 'refs/heads/master'
       run: ./gradlew publishPlugins -i --scan
       env: 
           # Gradle env variables docs: https://docs.gradle.org/current/userguide/build_environment.html#sec:gradle_environment_variables
