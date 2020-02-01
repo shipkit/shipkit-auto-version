@@ -1,0 +1,24 @@
+// docs: https://plugins.gradle.org/docs/publish-plugin
+gradlePlugin {
+    plugins {
+        autoVersion {
+            id = 'org.shipkit.shipkit-auto-version'
+            implementationClass = 'org.shipkit.auto.version.AutoVersionPlugin'
+        }
+    }
+}
+
+pluginBundle {
+    website = 'https://github.com/shipkit/org.shipkit.shipkit-auto-version'
+    vcsUrl = 'https://github.com/shipkit/org.shipkit.shipkit-auto-version.git'
+    plugins {
+        autoVersion {
+            displayName = 'Shipkit auto-version plugin'
+            description = 'Increments version automatically for easy releases from CI'
+            tags = ['ci', 'shipkit', 'releases']
+        }
+    }
+}
+
+ext.'gradle.publish.key' = System.getenv('GRADLE_PUBLISH_KEY')
+ext.'gradle.publish.secret' = System.getenv('GRADLE_PUBLISH_SECRET')
