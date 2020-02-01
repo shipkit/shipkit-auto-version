@@ -10,6 +10,6 @@ public class AutoVersionPlugin implements Plugin<Project> {
 
     public void apply(Project project) {
         String version = new AutoVersion(project.getProjectDir()).deductVersion();
-        project.setVersion(version);
+        project.allprojects(p -> p.setVersion(version));
     }
 }
