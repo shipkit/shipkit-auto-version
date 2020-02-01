@@ -1,14 +1,14 @@
 sourceSets {
-    functionalTest {
+    integTest {
     }
 }
 
-gradlePlugin.testSourceSets(sourceSets.functionalTest)
-configurations.functionalTestImplementation.extendsFrom(configurations.testImplementation)
+gradlePlugin.testSourceSets(sourceSets.integTest)
+configurations.integTestImplementation.extendsFrom(configurations.testImplementation)
 
 task integTest(type: Test) {
-    testClassesDirs = sourceSets.functionalTest.output.classesDirs
-    classpath = sourceSets.functionalTest.runtimeClasspath
+    testClassesDirs = sourceSets.integTest.output.classesDirs
+    classpath = sourceSets.integTest.runtimeClasspath
 }
 
 check {
