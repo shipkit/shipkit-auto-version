@@ -9,6 +9,7 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2   # docs: https://github.com/actions/checkout
+    - run: git fetch --depth=1 origin +refs/tags/*:refs/tags/*
     - name: Run build
       run: git tag
 #      run: ./gradlew build -i --scan --continue
