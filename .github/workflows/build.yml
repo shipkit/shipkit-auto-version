@@ -10,11 +10,10 @@ jobs:
     steps:
     - uses: actions/checkout@v2   # docs: https://github.com/actions/checkout
     - name: Run build
-      run: ./gradlew build --info --continue      
+      run: ./gradlew build -i --scan --continue      
     - name: Deploy to plugins.gradle.org
-      # below is work in progress, to enable second step remove TODO from below
-      if: success() && github.event_name == 'push(TODO-remove)' && github.ref == 'refs/heads/master'
-      run: ./gradlew publishPlugins --info
+      if: success() && github.event_name == 'push' && github.ref == 'refs/heads/master'
+      run: ./gradlew publishPlugins -i --scan
       env: 
           # Gradle env variables docs: https://docs.gradle.org/current/userguide/build_environment.html#sec:gradle_environment_variables
           ORG_GRADLE_PROJECT_gradle.publish.key: ${{ secrets.GRADLE_PUBLISH_KEY }}
