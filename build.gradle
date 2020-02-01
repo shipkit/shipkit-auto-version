@@ -1,9 +1,13 @@
 plugins {
+    id 'org.shipkit.shipkit-auto-version' version "0.0.1"
     id 'java-gradle-plugin'
+    id "com.gradle.plugin-publish" version "0.10.1"
     id 'groovy'
     id 'idea'
     id 'maven-publish'
 }
+
+println "Building version $version"
 
 group = "org.shipkit"
 version = "0.0.1"
@@ -24,15 +28,7 @@ dependencies {
     testImplementation "org.objenesis:objenesis:3.1" //as above
 }
 
-gradlePlugin {
-    plugins {
-        greeting {
-            id = 'org.shipkit.shipkit-auto-version'
-            implementationClass = 'org.shipkit.auto.version.AutoVersionPlugin'
-        }
-    }
-}
-
+apply from: "$rootDir/gradle/plugin-portal.gradle"
 apply from: "$rootDir/gradle/integ-test.gradle"
 
 publishing { // docs: https://docs.gradle.org/current/userguide/publishing_maven.html
