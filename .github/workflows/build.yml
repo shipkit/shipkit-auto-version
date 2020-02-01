@@ -18,8 +18,8 @@ jobs:
       run: git fetch --depth=1 origin +refs/tags/*:refs/tags/*
     - name: Run build
       run: ./gradlew build -i --scan --continue
-    - name: Deploy to plugins.gradle.org
-      if: success() && github.event_name == 'push' && github.ref == 'refs/heads/master'
+    - name: Deploy to plugins.gradle.org # TODO enable when tagging plugin is incorporated
+      if: success() && github.event_name == 'pushxxx' && github.ref == 'refs/heads/master'
       run: ./gradlew publishPlugins -i --scan
       env: 
           # Gradle env variables docs: https://docs.gradle.org/current/userguide/build_environment.html#sec:gradle_environment_variables
