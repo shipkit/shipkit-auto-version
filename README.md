@@ -40,7 +40,13 @@ version=1.0.*
 
 2. Apply `org.shipkit.auto-version` to the root project.
 
-3. Prosper! When running Gradle build the plugin will resolve `*` part of the version and set this value on the Gradle's project.
+3. Important! When using this plugin on CI make sure that your CI includes tags when making checkout.
+For example, when using GitHub actions, you need add something this:
+```
+run: git fetch --depth=1 origin +refs/tags/*:refs/tags/*
+```
+
+4. Prosper! When running Gradle build the plugin will resolve `*` part of the version and set this value on the Gradle's project.
 
 ## Customers
 
