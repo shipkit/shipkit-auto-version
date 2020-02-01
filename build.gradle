@@ -33,7 +33,7 @@ apply from: "$rootDir/gradle/integ-test.gradle"
 
 publishing { // docs: https://docs.gradle.org/current/userguide/publishing_maven.html
     publications {
-        //Run this for local testing: "./gradlew publishMavenPublicationToMavenLocal"
+        // Run this for local testing: "./gradlew publishMavenPublicationToMavenLocal"
         maven(MavenPublication) {
             from components.java
         }
