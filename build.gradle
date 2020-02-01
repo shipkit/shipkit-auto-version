@@ -1,5 +1,5 @@
 plugins {
-    id 'org.shipkit.shipkit-auto-version' version "0.0.1"
+    id 'org.shipkit.shipkit-auto-version' version "0.0.6"
     id 'java-gradle-plugin'
     id "com.gradle.plugin-publish" version "0.10.1"
     id 'groovy'
