@@ -15,10 +15,11 @@ It is a safe dependency - it is also tiny and does not bring any transitive depe
 
 There are other plugins out there that are similar:
 
-1. Below 2 plugins are great but they require to push a tag to make a release.
+1. Below 2 plugins are great but they (mostly) require to push a tag to make a release.
 Our plugin can release every change. 
  - https://github.com/ajoberstar/reckon
  - https://github.com/allegro/axion-release-plugin
+ - https://github.com/cinnober/semver-git
  
 2. Below plugin can release every change but the resulting version is not as nice (e.g. ```1.0.0+3bb4161```).
 The plugin has many features and thus is much more complex than our plugin.  
@@ -40,6 +41,12 @@ version=1.0.*
 2. Apply `org.shipkit.auto-version` to the root project.
 
 3. Prosper! When running Gradle build the plugin will resolve `*` part of the version and set this value on the Gradle's project.
+
+## Customers
+
+- https://github.com/linkedin/ambry
+- https://github.com/shipkit/org.shipkit.shipkit-auto-version
+- https://github.com/shipkit/org.shipkit.shipkit-tagging
  
 ## Implementation
 
