@@ -7,6 +7,7 @@
 
 TAG_NAME=$1
 
+echo "Creating tag $TAG_NAME"
 git config user.email "shipkit.org@gmail.com"
 git config user.name "shipkit"
 git tag -a -m "Release $TAG_NAME" $TAG_NAME
