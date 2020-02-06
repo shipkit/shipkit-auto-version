@@ -43,7 +43,7 @@ class AutoVersion {
         //since there is a matching nearest tag we will count the commits to resolve wildcard
         Version tag = nearest.get();
 
-        gitOutput = runner.run("git", "log", "--pretty=oneline", "v" + tag + "..master");
+        gitOutput = runner.run("git", "log", "--pretty=oneline", "v" + tag + "..HEAD");
         int commitCount = new CommitCounter().countCommitDelta(gitOutput);
 
         Version result = Version.forIntegers(

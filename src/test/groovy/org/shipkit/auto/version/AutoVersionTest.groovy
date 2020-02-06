@@ -32,7 +32,7 @@ v1.0.1
     def "increments version"() {
         versionFile << "version=2.0.*"
         runner.run("git", "tag") >> "v2.0.0"
-        runner.run("git", "log", "--pretty=oneline", "v2.0.0..master") >> """
+        runner.run("git", "log", "--pretty=oneline", "v2.0.0..HEAD") >> """
 some commit #1
 some commit #2
 """
