@@ -7,11 +7,6 @@
 
 TAG_NAME=$1
 
-echo "Creating tag $TAG_NAME"
-git config user.email "shipkit.org@gmail.com"
-git config user.name "shipkit"
-git tag -a -m "Release $TAG_NAME" $TAG_NAME
-
 echo "Running git push without output for security. If it fails make sure that GIT_SECRET env variable is set."
 git push --quiet https://$GIT_SECRET@github.com/shipkit/org.shipkit.shipkit-auto-version.git $TAG_NAME > /dev/null 2>&1
 EXIT_CODE=$?
