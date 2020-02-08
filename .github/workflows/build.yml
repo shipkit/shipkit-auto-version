@@ -13,6 +13,12 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v2   # docs: https://github.com/actions/checkout
-    - uses: actions/setup-ruby@v1
-    - run: gem -h
+    - uses: actions/checkout@v2   # https://github.com/actions/checkout
+    - name: Run build
+      run: echo Pretending to run the build
+    - name: "Set up Ruby for changelog generation"
+      uses: actions/setup-ruby@v1 # https://github.com/marketplace/actions/setup-ruby-for-use-with-actions
+    - name: Generate changelog 
+      run: |
+        gem install github_changelog_generator
+        github_changelog_generator
