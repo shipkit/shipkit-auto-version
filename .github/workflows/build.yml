@@ -18,7 +18,9 @@ jobs:
       run: echo Pretending to run the build
     - name: "Set up Ruby for changelog generation"
       uses: actions/setup-ruby@v1 # https://github.com/marketplace/actions/setup-ruby-for-use-with-actions
-    - name: Generate changelog 
+    - name: Generate changelog
+      env:
+        GRADLE_PUBLISH_SECRET = ${{secrets.GRADLE_PUBLISH_SECRET}}
       run: |
         gem install github_changelog_generator
-        github_changelog_generator
+        github_changelog_generator --user shipkit --project shipkit-auto-version
