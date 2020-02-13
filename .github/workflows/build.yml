@@ -3,6 +3,7 @@ name: CI
 on:
   push:
     branches: [master]
+    tags-ignore: [v1.*]
   pull_request:
     branches: [master]
 
@@ -15,6 +16,7 @@ jobs:
     - uses: actions/checkout@v2   # docs: https://github.com/actions/checkout
     - name: Fetch all tags
       run: git fetch --depth=1 origin +refs/tags/*:refs/tags/*
+#      TODO, do we have to fetch 'master' branch when we're building a tag?
     - name: Run build
       run: ./gradlew build -i --scan --continue
     - name: Deploy to plugins.gradle.org
