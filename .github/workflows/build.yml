@@ -3,7 +3,6 @@ name: CI
 on:
   push:
     branches: [master]
-    tags-ignore: [v1.*] #TODO needed?
   pull_request:
     branches: [master]
 
