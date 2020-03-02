@@ -16,7 +16,7 @@ class VersionSpecTest extends TmpFolderSpecification {
 
         then:
         def e = thrown(RuntimeException)
-        e.message == "Problems deducting the version automatically. Missing file: missing file"
+        e.message == "Problems deducting the version automatically. Please create file 'version.properties' with a valid version spec, for example 'version=1.0.*'"
         e.cause != null
     }
 

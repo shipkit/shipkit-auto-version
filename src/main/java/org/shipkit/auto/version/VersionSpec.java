@@ -19,7 +19,8 @@ class VersionSpec {
         try {
             p.load(new FileReader(versionFile));
         } catch (IOException e) {
-            throw new RuntimeException(ERROR + " Missing file: " + versionFile, e);
+            throw new RuntimeException(ERROR
+                    + " Please create file 'version.properties' with a valid version spec, for example 'version=1.0.*'", e);
         }
 
         Object v = p.get("version");
