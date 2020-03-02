@@ -52,7 +52,6 @@ run: git fetch --depth=1 origin +refs/tags/*:refs/tags/*
 
 - https://github.com/linkedin/ambry
 - https://github.com/shipkit/org.shipkit.shipkit-auto-version
-- https://github.com/shipkit/org.shipkit.shipkit-tagging
  
 ## Implementation
 
