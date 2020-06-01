@@ -38,7 +38,7 @@ The contents should contain the version spec:
 version=1.0.*
 ```
 
-2. Apply `org.shipkit.auto-version` to the root project.
+2. Apply `org.shipkit.shipkit-auto-version` to the root project.
 
 3. Important! When using this plugin on CI make sure that your CI includes tags when making checkout.
 For example, when using GitHub actions, you need add something this:
