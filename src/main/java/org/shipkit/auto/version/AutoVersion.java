@@ -34,7 +34,7 @@ class AutoVersion {
         String spec = VersionSpec.readVersionSpec(versionFile);
         if (!spec.endsWith("*")) {
             //if there is no wildcard we will use the version 'as is'
-            LOG.lifecycle("auto-version plugin is setting explicit version '" + spec +
+            LOG.lifecycle("shipkit-auto-version is setting explicit version '" + spec +
                     "' as declared in '" + versionFile.getName() + "' file.");
             return spec;
         }
@@ -45,7 +45,7 @@ class AutoVersion {
         if (!nearest.isPresent()) {
             //if there is no nearest matching tag (same major, same minor) we can just use '0' for the wildcard
             String version = spec.replace("*", "0");
-            LOG.lifecycle("auto-version plugin found no tags, setting version to '" + version + "'");
+            LOG.lifecycle("shipkit-auto-version plugin found no tags, setting version to '" + version + "'");
             return version;
         }
 
@@ -59,7 +59,7 @@ class AutoVersion {
                 tag.getMajorVersion(), tag.getMinorVersion(), tag.getPatchVersion() + commitCount);
 
         String v = result.toString();
-        LOG.lifecycle("auto-version plugin found previous tag '" + tag + "', setting version to '" + v + "'");
+        LOG.lifecycle("shipkit-auto-version plugin found previous tag '" + tag + "', setting version to '" + v + "'");
         return v;
     }
 }
