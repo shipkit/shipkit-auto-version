@@ -1,5 +1,7 @@
 package org.shipkit.auto.version
 
+import org.gradle.api.logging.Logger
+
 class AutoVersionTest extends TmpFolderSpecification {
 
     ProcessRunner runner = Mock()
@@ -39,5 +41,19 @@ some commit #2
 
         expect:
         autoVersion.deductVersion() == "2.0.2"
+    }
+
+    def "no build failure when deducting versions fails"() {
+        def log = Mock(Logger)
+        versionFile << "version=1.0.*"
+
+        when:
+        def v = autoVersion.deductVersion(log)
+
+        then:
+        v == "1.0.unspecified"
+        1 * log.debug("shipkit-auto-version was unable to deduct the version due to an exception", _ as Exception)
+        1 * log.lifecycle("shipkit-auto-version was unable to deduct the version due to an exception.\n" +
+                "  - setting version to '1.0.unspecified' (run with --debug for more info)")
     }
 }

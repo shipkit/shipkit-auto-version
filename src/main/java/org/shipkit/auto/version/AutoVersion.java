@@ -31,14 +31,31 @@ class AutoVersion {
     }
 
     String deductVersion() {
+        return deductVersion(LOG);
+    }
+
+    String deductVersion(Logger log) {
         String spec = VersionSpec.readVersionSpec(versionFile);
         if (!spec.endsWith("*")) {
             //if there is no wildcard we will use the version 'as is'
-            LOG.lifecycle("shipkit-auto-version is setting explicit version '" + spec +
+            log.lifecycle("shipkit-auto-version is setting explicit version '" + spec +
                     "' as declared in '" + versionFile.getName() + "' file.");
             return spec;
         }
 
+        try {
+            return deductVersion(spec);
+        } catch (Exception e) {
+            String message = "shipkit-auto-version was unable to deduct the version due to an exception";
+            log.debug(message, e);
+            String v = spec.replace("*", "unspecified");
+            log.lifecycle(message + ".\n" +
+                    "  - setting version to '" + v + "' (run with --debug for more info)");
+            return v;
+        }
+    }
+
+    String deductVersion(String spec) {
         String gitOutput = runner.run("git", "tag");
         String[] tags = gitOutput.split(System.lineSeparator());
         Optional<Version> nearest = new NearestTagFinder().findTag(asList(tags), spec);
