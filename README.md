@@ -9,7 +9,7 @@ This way you can set up the project for continuous delivery and release every me
 No more infamous "version bump" commits in every release!
 
 This plugin is **tiny** and has a single dependency on https://github.com/zafarkhaja/jsemver.
-It is a safe dependency - it is also tiny and does not bring any transitive dependencies.
+It is a safe dependency because it is tiny, has no dependencies, and it is final (no code changes since 2015 - it wraps semver protocol that had [no changes since 2013](https://github.com/semver/semver/tree/v2.0.0)).
 
 ## Other plugins
 
