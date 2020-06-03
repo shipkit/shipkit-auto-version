@@ -7,6 +7,7 @@ class AutoVersionTest extends TmpFolderSpecification {
     ProcessRunner runner = Mock()
     File versionFile
     AutoVersion autoVersion
+    def log = Mock(Logger)
 
     def setup() {
         versionFile = writeFile("")
@@ -16,8 +17,13 @@ class AutoVersionTest extends TmpFolderSpecification {
     def "uses raw version if no wildcard in version file"() {
         versionFile << "version=1.5.0-SNAPSHOT"
 
-        expect:
-        autoVersion.deductVersion() == "1.5.0-SNAPSHOT"
+        when:
+        def v = autoVersion.deductVersion(log)
+
+        then:
+        v == "1.5.0-SNAPSHOT"
+        1 * log.lifecycle("Building version '1.5.0-SNAPSHOT'\n" +
+                "  - reason: shipkit-auto-version uses verbatim version from '$versionFile.name' file")
     }
 
     def "uses '0' if no tag found"() {
@@ -27,8 +33,13 @@ v1.0.0
 v1.0.1
 """
 
-        expect:
-        autoVersion.deductVersion() == "1.1.0"
+        when:
+        def v = autoVersion.deductVersion(log)
+
+        then:
+        v == "1.1.0"
+        1 * log.lifecycle("Building version '1.1.0'\n" +
+                "  - reason: shipkit-auto-version found no tags")
     }
 
     def "increments version"() {
@@ -39,12 +50,16 @@ some commit #1
 some commit #2
 """
 
-        expect:
-        autoVersion.deductVersion() == "2.0.2"
+        when:
+        def v = autoVersion.deductVersion(log)
+
+        then:
+        v == "2.0.2"
+        1 * log.lifecycle("Building version '2.0.2'\n" +
+                "  - reason: shipkit-auto-version deducted version based on previous tag: '2.0.0'")
     }
 
     def "no build failure when deducting versions fails"() {
-        def log = Mock(Logger)
         versionFile << "version=1.0.*"
 
         when:
@@ -52,8 +67,9 @@ some commit #2
 
         then:
         v == "1.0.unspecified"
-        1 * log.debug("shipkit-auto-version was unable to deduct the version due to an exception", _ as Exception)
-        1 * log.lifecycle("shipkit-auto-version was unable to deduct the version due to an exception.\n" +
-                "  - setting version to '1.0.unspecified' (run with --debug for more info)")
+        1 * log.debug("shipkit-auto-version caught an exception, falling back to reasonable default", _ as Exception)
+        1 * log.lifecycle("Building version '1.0.unspecified'\n" +
+                "  - reason: shipkit-auto-version caught an exception, falling back to reasonable default\n" +
+                "  - run with --debug for more info")
     }
 }
