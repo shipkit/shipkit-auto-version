@@ -42,7 +42,7 @@ class CommitCounter {
      */
     int countCommitDelta(String gitOutput) {
         gitOutput = gitOutput.trim();
-        String[] lines = gitOutput.split(System.lineSeparator());
+        String[] lines = gitOutput.split("\\R");
         Pattern pattern = Pattern.compile(".* Merge pull request #\\d+ from .*");
         int commits = 0;
         int mergeCommits = 0;
