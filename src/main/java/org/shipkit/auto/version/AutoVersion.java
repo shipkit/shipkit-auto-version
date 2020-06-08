@@ -59,7 +59,7 @@ class AutoVersion {
 
     String deductVersion(String spec, Logger log) {
         String gitOutput = runner.run("git", "tag");
-        String[] tags = gitOutput.split(System.lineSeparator());
+        String[] tags = gitOutput.split("\\R");
         Optional<Version> nearest = new NearestTagFinder().findTag(asList(tags), spec);
         if (!nearest.isPresent()) {
             //if there is no nearest matching tag (same major, same minor) we can just use '0' for the wildcard
