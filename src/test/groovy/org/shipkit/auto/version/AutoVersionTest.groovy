@@ -21,7 +21,8 @@ class AutoVersionTest extends TmpFolderSpecification {
         def v = autoVersion.deductVersion(log)
 
         then:
-        v == "1.5.0-SNAPSHOT"
+        v.version == "1.5.0-SNAPSHOT"
+        v.previousVersion == null
         1 * log.lifecycle("Building version '1.5.0-SNAPSHOT'\n" +
                 "  - reason: shipkit-auto-version uses verbatim version from '$versionFile.name' file")
     }
@@ -37,7 +38,8 @@ v1.0.1
         def v = autoVersion.deductVersion(log)
 
         then:
-        v == "1.1.0"
+        v.version == "1.1.0"
+        v.previousVersion == null
         1 * log.lifecycle("Building version '1.1.0'\n" +
                 "  - reason: shipkit-auto-version found no tags")
     }
@@ -54,7 +56,8 @@ some commit #2
         def v = autoVersion.deductVersion(log)
 
         then:
-        v == "2.0.2"
+        v.version == "2.0.2"
+        v.previousVersion == "2.0.0"
         1 * log.lifecycle("Building version '2.0.2'\n" +
                 "  - reason: shipkit-auto-version deducted version based on previous tag: '2.0.0'")
     }
@@ -66,7 +69,8 @@ some commit #2
         def v = autoVersion.deductVersion(log)
 
         then:
-        v == "1.0.unspecified"
+        v.version == "1.0.unspecified"
+        v.previousVersion == null
         1 * log.debug("shipkit-auto-version caught an exception, falling back to reasonable default", _ as Exception)
         1 * log.lifecycle("Building version '1.0.unspecified'\n" +
                 "  - reason: shipkit-auto-version caught an exception, falling back to reasonable default\n" +

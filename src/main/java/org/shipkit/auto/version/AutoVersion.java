@@ -29,7 +29,7 @@ class AutoVersion {
         this(new ProcessRunner(projectDir), new File(projectDir, "version.properties"));
     }
 
-    String deductVersion() {
+    DeductedVersion deductVersion() {
         return deductVersion(LOG);
     }
 
@@ -38,12 +38,12 @@ class AutoVersion {
                 "  - reason: shipkit-auto-version " + reason);
     }
 
-    String deductVersion(Logger log) {
+    DeductedVersion deductVersion(Logger log) {
         String spec = VersionSpec.readVersionSpec(versionFile);
         if (!spec.endsWith("*")) {
             //if there is no wildcard we will use the version 'as is'
             explainVersion(log, spec, "uses verbatim version from '" + versionFile.getName() + "' file");
-            return spec;
+            return new DeductedVersion(spec, null);
         }
 
         try {
@@ -53,11 +53,11 @@ class AutoVersion {
             log.debug("shipkit-auto-version " + message, e);
             String v = spec.replace("*", "unspecified");
             explainVersion(log, v, message + "\n  - run with --debug for more info");
-            return v;
+            return new DeductedVersion(v, null);
         }
     }
 
-    String deductVersion(String spec, Logger log) {
+    DeductedVersion deductVersion(String spec, Logger log) {
         String gitOutput = runner.run("git", "tag");
         String[] tags = gitOutput.split("\\R");
         Optional<Version> nearest = new NearestTagFinder().findTag(asList(tags), spec);
@@ -66,20 +66,20 @@ class AutoVersion {
             String version = spec.replace("*", "0");
             //TODO add information 'found no tags matching ...'
             explainVersion(log, version, "found no tags");
-            return version;
+            return new DeductedVersion(version, null);
         }
 
         //since there is a matching nearest tag we will count the commits to resolve wildcard
-        Version tag = nearest.get();
+        Version previousVersion = nearest.get();
 
-        gitOutput = runner.run("git", "log", "--pretty=oneline", "v" + tag + "..HEAD");
+        gitOutput = runner.run("git", "log", "--pretty=oneline", "v" + previousVersion + "..HEAD");
         int commitCount = new CommitCounter().countCommitDelta(gitOutput);
 
         Version result = Version.forIntegers(
-                tag.getMajorVersion(), tag.getMinorVersion(), tag.getPatchVersion() + commitCount);
+                previousVersion.getMajorVersion(), previousVersion.getMinorVersion(), previousVersion.getPatchVersion() + commitCount);
 
         String v = result.toString();
-        explainVersion(log, v, "deducted version based on previous tag: '" + tag + "'");
-        return v;
+        explainVersion(log, v, "deducted version based on previous tag: '" + previousVersion.toString() + "'");
+        return new DeductedVersion(v, previousVersion.toString());
     }
 }

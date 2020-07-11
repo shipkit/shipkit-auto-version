@@ -31,7 +31,11 @@ class AutoVersionPluginTest extends Specification {
         runner.run("git", "checkout", "master")
         runner.run("git", "merge", "PR-10", "--no-ff", "-m", "Merge pull request #10 from ...")
 
-        expect:
-        new AutoVersion(project.projectDir).deductVersion() == "1.0.1"
+        when:
+        def v = new AutoVersion(project.projectDir).deductVersion()
+
+        then:
+        v.version == "1.0.1"
+        v.previousVersion == "1.0.0"
     }
 }
