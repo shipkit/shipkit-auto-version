@@ -22,14 +22,12 @@ class AutoVersionPluginIntegTest extends Specification {
     def "uses explicit version declared in the version file"() {
         file("version.properties") << "version=1.0.1"
         file("build.gradle") << """
-            task showVersion { doLast { println "version: " + project.version }}
+            assert project.ext['shipkit-auto-version.previous-version'] == null
+            assert project.version == '1.0.1'
         """
 
-        given:
-        def result = run("showVersion")
-
         expect:
-        result.output.contains("version: 1.0.1")
+        run("tasks")
     }
 
     File file(String path) {
