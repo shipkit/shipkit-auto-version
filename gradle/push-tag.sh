@@ -1,6 +1,6 @@
 #!/bin/sh
 
-#Git push is implemented in the script to make sure we are not leaking GH key to the output
+# Git push is implemented in the script to make sure we are not leaking GH key to the output
 # Expects:
 # 1. 'GIT_SECRET' env variable to be in format: user:github_access_token, for example: mockitoguy:qq43234xc23x23d24d
 # 2. tag name as a paramter of this script
