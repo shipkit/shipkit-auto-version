@@ -15,7 +15,7 @@ jobs:
     - name: Fetch all tags
       run: git fetch --depth=1 origin +refs/tags/*:refs/tags/*      
     - name: Run build
-      run: .\gradlew.bat build -i --scan --continue
+      run: .\gradlew.bat build --scan --continue
 
   build:
 
@@ -29,10 +29,10 @@ jobs:
       run: git fetch --depth=1 origin +refs/tags/*:refs/tags/*
       # when we build tags we may need to fetch the 'master' branch, too
     - name: Run build
-      run: ./gradlew build -i --scan --continue
+      run: ./gradlew build --scan --continue
     - name: Deploy to plugins.gradle.org
       if: success() && github.event_name == 'push' && github.ref == 'refs/heads/master'
-      run: ./gradlew createTag pushTag publishPlugins -i --scan
+      run: ./gradlew createTag pushTag publishPlugins --scan
       env:
           # Gradle env variables docs: https://docs.gradle.org/current/userguide/build_environment.html#sec:gradle_environment_variables
           GRADLE_PUBLISH_KEY: ${{ secrets.GRADLE_PUBLISH_KEY }}
