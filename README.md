@@ -51,14 +51,10 @@ run: git fetch --depth=1 origin +refs/tags/*:refs/tags/*
 ## shipkit-auto-version.previous-version
 
 This plugin exposes an 'ext' property `shipkit-auto-version.previous-version` that can be used to get access to the previous version.
-Example usage:
+Example:
 
 ```
-task describeVersion {
-  doLast {
-    println "Current version: $project.version, previous version: $project.ext.'shipkit-auto-version.previous-version'
-  }
-}
+println project.ext.'shipkit-auto-version.previous-version'
 ```
 
 ## Customers
