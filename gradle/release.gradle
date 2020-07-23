@@ -42,15 +42,14 @@ task createTag {
     }
 }
 
-def genTask = tasks.named("generateChangelog").get()
-
 tasks.named("generateChangelog") {
     previousRevision = "v" + project.ext.'shipkit-auto-version.previous-version'
     readOnlyToken = "a0a4c0f41c200f7c653323014d6a72a127764e17"
-    repository = genTask.repository
+    repository = "shipkit/shipkit-changelog"
 }
 
 tasks.named("githubRelease") {
+    def genTask = tasks.named("generateChangelog").get()
     dependsOn genTask
     repository = genTask.repository
     changelog = genTask.outputFile
