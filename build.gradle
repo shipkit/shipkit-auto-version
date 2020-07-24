@@ -4,8 +4,8 @@ buildscript {
         maven { url "https://plugins.gradle.org/m2/" }
     }
     dependencies {
-        classpath "org.shipkit:shipkit-auto-version:0.0.34"
-        classpath "org.shipkit:shipkit-changelog:0.0.3"
+        classpath "org.shipkit:shipkit-auto-version:0.0.+"
+        classpath "org.shipkit:shipkit-changelog:0.0.+"
         classpath "com.gradle.publish:plugin-publish-plugin:0.12.0"
     }
 }
@@ -17,6 +17,7 @@ apply plugin: 'groovy'
 apply plugin: "com.gradle.plugin-publish"
 apply plugin: "org.shipkit.shipkit-auto-version"
 apply plugin: "org.shipkit.shipkit-changelog"
+apply plugin: "org.shipkit.shipkit-gh-release"
 
 group = "org.shipkit"
 
@@ -46,10 +47,4 @@ publishing { // docs: https://docs.gradle.org/current/userguide/publishing_maven
             from components.java
         }
     }
-}
-
-tasks.named("generateChangelog") {
-    previousRevision = "v0.0.34" //TODO replace with dynamically calculated previous version
-    readOnlyToken = "a0a4c0f41c200f7c653323014d6a72a127764e17"
-    repository = "shipkit/shipkit-auto-version"
 }
