@@ -11,23 +11,12 @@ No more infamous "version bump" commits in every release!
 This plugin is **tiny** and has a single dependency on https://github.com/zafarkhaja/jsemver.
 It is a safe dependency because it is tiny, has no dependencies, and it is final (no code changes since 2015 - it wraps semver protocol that had [no changes since 2013](https://github.com/semver/semver/tree/v2.0.0)).
 
-## Other plugins
+## Customers / sample projects
 
-There are other plugins out there that are similar:
-
-1. Below 2 plugins are great but they (mostly) require to push a tag to make a release.
-Our plugin can release every change. 
- - https://github.com/ajoberstar/reckon
- - https://github.com/allegro/axion-release-plugin
- - https://github.com/cinnober/semver-git
- 
-2. Below plugin can release every change but the resulting version is not as nice (e.g. ```1.0.0+3bb4161```).
-The plugin has many features and thus is much more complex than our plugin.  
- - https://github.com/tschulte/gradle-semantic-release-plugin
-
-Use the plugin that works best for you and push every change to production!
-
-Discussion about this use case: https://github.com/mockito/shipkit/issues/395 
+- https://github.com/shipkit/shipkit-demo (great example/reference project)
+- https://github.com/shipkit/shipkit-changelog (this project)
+- https://github.com/shipkit/shipkit-auto-version
+- https://github.com/linkedin/ambry
 
 ## Usage
 
@@ -56,13 +45,8 @@ Example:
 ```
 println project.ext.'shipkit-auto-version.previous-version'
 ```
-
-## Customers
-
-- https://github.com/linkedin/ambry
-- https://github.com/shipkit/org.shipkit.shipkit-auto-version
  
-## Implementation
+## Implementation details
 
 When the plugin is applied to the project it will:
 
@@ -89,3 +73,21 @@ d       1.*.5                                       error   unsupported format
     - run `git log` to identify # of commits 
     - add commit count to the patch version value from the latest tag
     - viola! we got the version to use!
+
+## Similar plugins
+
+There are other plugins out there that are similar:
+
+1. Below 2 plugins are great but they (mostly) require to push a tag to make a release.
+Our plugin can release every change. 
+ - https://github.com/ajoberstar/reckon
+ - https://github.com/allegro/axion-release-plugin
+ - https://github.com/cinnober/semver-git
+ 
+2. Below plugin can release every change but the resulting version is not as nice (e.g. ```1.0.0+3bb4161```).
+The plugin has many features and thus is much more complex than our plugin.  
+ - https://github.com/tschulte/gradle-semantic-release-plugin
+
+Use the plugin that works best for you and push every change to production!
+
+Discussion about this use case: https://github.com/mockito/shipkit/issues/395 
