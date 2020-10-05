@@ -14,6 +14,14 @@ class VersionSpec {
 
     private static String ERROR = "Problems deducting the version automatically.";
 
+    /**
+     * Reads the version spec from provided file.
+     * Throws exception message with actionable message when version file does not exist
+     * or does not contain correctly formatted version spec.
+     *
+     * @param versionFile file that has the version spec
+     * @return validated version spec
+     */
     static String readVersionSpec(File versionFile) {
         Properties p = new Properties();
         try {
