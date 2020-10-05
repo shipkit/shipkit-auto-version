@@ -29,7 +29,7 @@ class VersionSpec {
         }
         String versionSpec = (String) v;
 
-        if (versionSpec.matches("\\d+.\\d+.(\\*)")) {
+        if (isWildcardSpec(versionSpec)) {
             return versionSpec;
         }
 
@@ -40,6 +40,15 @@ class VersionSpec {
         }
 
         return versionSpec;
+    }
+
+    /**
+     * Returns true when the version spec is valid and uses '*' wildcard.
+     *
+     * @param versionSpec version spec
+     */
+    static boolean isWildcardSpec(String versionSpec) {
+        return versionSpec.matches("\\d+\\.\\d+\\.\\*");
     }
 
     private static String exceptionMessage(File versionFile) {

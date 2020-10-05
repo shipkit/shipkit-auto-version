@@ -45,6 +45,6 @@ class VersionSpecTest extends TmpFolderSpecification {
         e.cause != null
 
         where:
-        spec << ["foo.version", "1.2", "1.2.**", "1.*.*", "1.0.0-beta.*"]
+        spec << ["foo.version", "1.2", "1.2.**", "1.*.*", "1.0.0-beta.*", "1.12*"]
     }
 }
