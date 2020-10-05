@@ -1,4 +1,4 @@
-![CI](https://github.com/shipkit/org.shipkit.shipkit-auto-version/workflows/CI/badge.svg)
+[![CI](https://github.com/shipkit/shipkit-auto-version/workflows/CI/badge.svg)](https://github.com/shipkit/shipkit-auto-version/actions)
 
 # Shipkit auto-version Gradle plugin
 
