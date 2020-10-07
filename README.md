@@ -1,4 +1,5 @@
 [![CI](https://github.com/shipkit/shipkit-auto-version/workflows/CI/badge.svg)](https://github.com/shipkit/shipkit-auto-version/actions)
+[![Gradle Portal](https://img.shields.io/maven-metadata/v/https/plugins.gradle.org/m2/org/shipkit/shipkit-auto-version/maven-metadata.xml.svg?label=Gradle%20Plugins)](https://plugins.gradle.org/plugin/org.shipkit.shipkit-auto-version)
 
 # Shipkit auto-version Gradle plugin
 
@@ -14,8 +15,8 @@ It is a safe dependency because it is tiny, has no dependencies, and it is final
 ## Customers / sample projects
 
 - https://github.com/shipkit/shipkit-demo (great example/reference project)
-- https://github.com/shipkit/shipkit-changelog (this project)
-- https://github.com/shipkit/shipkit-auto-version
+- https://github.com/shipkit/shipkit-changelog
+- https://github.com/shipkit/shipkit-auto-version (this project)
 - https://github.com/linkedin/ambry
 
 ## Usage
@@ -78,13 +79,14 @@ d       1.*.5                                       error   unsupported format
 
 There are other plugins out there that are similar:
 
-1. Below 2 plugins are great but they (mostly) require to push a tag to make a release.
+1. Below plugins are great, but they (mostly) require to push a tag to make a release.
 Our plugin can release every change. 
  - https://github.com/ajoberstar/reckon
  - https://github.com/allegro/axion-release-plugin
  - https://github.com/cinnober/semver-git
+ - https://github.com/nemerosa/versioning
  
-2. Below plugin can release every change but the resulting version is not as nice (e.g. ```1.0.0+3bb4161```).
+2. Below plugin can release every change, but the resulting version is not as nice (e.g. ```1.0.0+3bb4161```).
 The plugin has many features and thus is much more complex than our plugin.  
  - https://github.com/tschulte/gradle-semantic-release-plugin
 
