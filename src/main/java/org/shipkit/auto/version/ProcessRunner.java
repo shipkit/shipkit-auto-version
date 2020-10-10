@@ -6,6 +6,9 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.Arrays;
 
+/**
+ * Runs command in provided working dir.
+ */
 class ProcessRunner {
 
     private final File workDir;

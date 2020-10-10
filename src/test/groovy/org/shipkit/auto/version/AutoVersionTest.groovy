@@ -41,7 +41,7 @@ v1.0.1
         v.version == "1.1.0"
         v.previousVersion == null
         1 * log.lifecycle("Building version '1.1.0'\n" +
-                "  - reason: shipkit-auto-version found no tags")
+                "  - reason: shipkit-auto-version found no tags matching version spec: '1.1.*'")
     }
 
     def "increments version"() {

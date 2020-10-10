@@ -4,6 +4,9 @@ import java.util.regex.Pattern;
 
 import static java.lang.Integer.max;
 
+/**
+ * Counts commits based on the output from 'git log'
+ */
 class CommitCounter {
 
     /**

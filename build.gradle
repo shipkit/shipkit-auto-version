@@ -10,14 +10,9 @@ buildscript {
     }
 }
 
-apply plugin: 'java-gradle-plugin'
 apply plugin: 'maven-publish'
 apply plugin: 'idea'
 apply plugin: 'groovy'
-apply plugin: "com.gradle.plugin-publish"
-apply plugin: "org.shipkit.shipkit-auto-version"
-apply plugin: "org.shipkit.shipkit-changelog"
-apply plugin: "org.shipkit.shipkit-gh-release"
 
 group = "org.shipkit"
 

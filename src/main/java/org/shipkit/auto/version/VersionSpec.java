@@ -14,6 +14,14 @@ class VersionSpec {
 
     private static String ERROR = "Problems deducting the version automatically.";
 
+    /**
+     * Reads the version spec from provided file.
+     * Throws exception message with actionable message when version file does not exist
+     * or does not contain correctly formatted version spec.
+     *
+     * @param versionFile file that has the version spec
+     * @return validated version spec
+     */
     static String readVersionSpec(File versionFile) {
         Properties p = new Properties();
         try {
@@ -29,7 +37,7 @@ class VersionSpec {
         }
         String versionSpec = (String) v;
 
-        if (versionSpec.matches("\\d+.\\d+.(\\*)")) {
+        if (isWildcardSpec(versionSpec)) {
             return versionSpec;
         }
 
@@ -40,6 +48,15 @@ class VersionSpec {
         }
 
         return versionSpec;
+    }
+
+    /**
+     * Returns true when the version spec is valid and uses '*' wildcard.
+     *
+     * @param versionSpec version spec
+     */
+    static boolean isWildcardSpec(String versionSpec) {
+        return versionSpec.matches("\\d+\\.\\d+\\.\\*");
     }
 
     private static String exceptionMessage(File versionFile) {

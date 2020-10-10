@@ -29,6 +29,9 @@ class AutoVersion {
         this(new ProcessRunner(projectDir), new File(projectDir, "version.properties"));
     }
 
+    /**
+     * Deduct version based on existing tags (will run 'git tag'), and the version spec from versionFile field.
+     */
     DeductedVersion deductVersion() {
         return deductVersion(LOG);
     }
@@ -38,6 +41,7 @@ class AutoVersion {
                 "  - reason: shipkit-auto-version " + reason);
     }
 
+    //Exposed for testing so that 'log' can be mocked
     DeductedVersion deductVersion(Logger log) {
         String spec = VersionSpec.readVersionSpec(versionFile);
         if (!spec.endsWith("*")) {
@@ -57,6 +61,7 @@ class AutoVersion {
         }
     }
 
+    //Exposed for testing so that 'log' can be mocked and we can pass arbitrary spec
     DeductedVersion deductVersion(String spec, Logger log) {
         String gitOutput = runner.run("git", "tag");
         String[] tags = gitOutput.split("\\R");
@@ -64,8 +69,7 @@ class AutoVersion {
         if (!nearest.isPresent()) {
             //if there is no nearest matching tag (same major, same minor) we can just use '0' for the wildcard
             String version = spec.replace("*", "0");
-            //TODO add information 'found no tags matching ...'
-            explainVersion(log, version, "found no tags");
+            explainVersion(log, version, "found no tags matching version spec: '" + spec + "'");
             return new DeductedVersion(version, null);
         }
 
