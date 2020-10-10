@@ -1,5 +1,6 @@
 package org.shipkit.auto.version
 
+import spock.lang.Unroll
 
 import static VersionSpec.readVersionSpec
 
@@ -20,7 +21,7 @@ class VersionSpecTest extends TmpFolderSpecification {
         e.cause != null
     }
 
-    def "bad format"() {
+    def "missing 'version' property"() {
         def f = writeFile("noversion=missing")
 
         when:
@@ -28,11 +29,12 @@ class VersionSpecTest extends TmpFolderSpecification {
 
         then:
         def e = thrown(VersionSpec.MissingVersionKey)
-        e.message == "Problems deducting the version automatically. Expected correct 'version' property in file: " + f + "\n" +
-                "Correct examples: 'version=1.0.*', 'version=2.10.100'"
+        e.message == "Missing 'version' property in file: '" + f.name + "'\n" +
+        "  Correct examples: 'version=1.0.*', 'version=2.10.100'"
     }
 
-    def "bad version format"() {
+    @Unroll
+    def "bad version format: #spec"() {
         def f = writeFile("version=" + spec)
 
         when:
@@ -40,8 +42,8 @@ class VersionSpecTest extends TmpFolderSpecification {
 
         then:
         def e = thrown(VersionSpec.IncorrectVersionFormat)
-        e.message == "Problems deducting the version automatically. Expected correct 'version' property in file: " + f + "\n" +
-                "Correct examples: 'version=1.0.*', 'version=2.10.100'"
+        e.message == "Invalid format of 'version' property in file: '" + f.name + "'\n" +
+                "  Correct examples: 'version=1.0.*', 'version=2.10.100'"
         e.cause != null
 
         where:

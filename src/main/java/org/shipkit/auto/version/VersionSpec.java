@@ -59,20 +59,20 @@ class VersionSpec {
         return versionSpec.matches("\\d+\\.\\d+\\.\\*");
     }
 
-    private static String exceptionMessage(File versionFile) {
-        return "Problems deducting the version automatically. Expected correct 'version' property in file: " + versionFile + "\n" +
-                "Correct examples: 'version=1.0.*', 'version=2.10.100'";
+    private static String messageDetails(File versionFile) {
+        return " 'version' property in file: '" + versionFile.getName() + "'\n" +
+                "  Correct examples: 'version=1.0.*', 'version=2.10.100'";
     }
 
     static class MissingVersionKey extends RuntimeException {
         MissingVersionKey(File versionFile) {
-            super(exceptionMessage(versionFile));
+            super("Missing" + messageDetails(versionFile));
         }
     }
 
     static class IncorrectVersionFormat extends RuntimeException {
         IncorrectVersionFormat(File versionFile, Exception e) {
-            super(exceptionMessage(versionFile), e);
+            super("Invalid format of" + messageDetails(versionFile), e);
         }
     }
 }
