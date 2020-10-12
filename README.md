@@ -67,6 +67,7 @@ a       1.0.*      v1.0.5          2                1.0.7
 b       1.1.*      v1.0.5          5                1.1.0   first x.y.0 version
 c       2.0.*      v1.0.5          5                2.0.0   first z.0.0 version
 d       1.*.5                                       error   unsupported format                   
+e       1.0.*      v1.0.5          0                1.0.5   zero new commits                    
 ```
 
  - in case b),c) use '0' as patch version
