@@ -1,8 +1,8 @@
 package org.shipkit.auto.version;
 
+
 import java.util.regex.Pattern;
 
-import static java.lang.Integer.max;
 
 /**
  * Counts commits based on the output from 'git log'
@@ -45,6 +45,9 @@ class CommitCounter {
      */
     int countCommitDelta(String gitOutput) {
         gitOutput = gitOutput.trim();
+        if (gitOutput.length() == 0) {
+            return 0;
+        }
         String[] lines = gitOutput.split("\\R");
         Pattern pattern = Pattern.compile(".* Merge pull request #\\d+ from .*");
         int commits = 0;
@@ -57,6 +60,6 @@ class CommitCounter {
                 commits = 0; //reset so that we focus on merge commits
             }
         }
-        return max(mergeCommits + commits, 1);
+        return mergeCommits + commits;
     }
 }

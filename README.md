@@ -63,17 +63,31 @@ When the plugin is applied to the project it will:
  
  ```
 case    spec       latest tag      # of commits     result  description
-a       1.0.*      v1.0.5          2                1.0.7
-b       1.1.*      v1.0.5          5                1.1.0   first x.y.0 version
-c       2.0.*      v1.0.5          5                2.0.0   first z.0.0 version
-d       1.*.5                                       error   unsupported format                   
+a       1.0.*      v1.0.5          0                1.0.5   zero new commits                    
+b       1.0.*      v1.0.5          2                1.0.7   two new commits
+c       1.0.*      v1.0.5          5 (2 merge + 1)  1.0.8   two merge commits and new one on top
+d       1.1.*      v1.0.5          5                1.1.0   first x.y.0 version
+e       2.0.*      v1.0.5          5                2.0.0   first z.0.0 version
+f       1.*.5                                       error   unsupported format                   
 ```
 
- - in case b),c) use '0' as patch version
- - in case a) we are resolving the wildcard based on # of commits on top of the tag
+ - in case a),b) we are resolving the wildcard based on # of commits on top of the tag
     - run `git log` to identify # of commits 
     - add commit count to the patch version value from the latest tag
     - viola! we got the version to use!
+ - in case c) we have following situation (`git log` output):
+    - 64e7eb517 Commit without a PR
+    - 2994de4df Merge pull request #123 from mockito/gradle-wrapper-validation
+    - 67bd4e96c Adds Gradle Wrapper Validation
+    - 64e7eb517 Merge pull request #99 from mockito/ongoing-stubbing
+    - dd8b07887 Add OngoingStubbing
+    - 084e8af18 (tag: v1.0.5) Merge pull request #88 from mockito/mockito-88
+    
+    On top of v1.0.5 tag there are 5 commits, i.e. 2 merge commits (`64e7eb517` and `2994de4df`) and 1 new commit 
+    (`64e7eb517`) without Pull Request on top. 
+    The patch version will be `8` i.e. 5 plus a sum of those two numbers. 
+
+ - in case d),e) use '0' as patch version
 
 ## Similar plugins
 

@@ -44,8 +44,8 @@ dd8b07887 Add NotExtensible to OngoingStubbing
 """)
     }
 
-    def "returns 1 if no commits"() {
+    def "returns 0 if no commits"() {
         expect:
-        1 == new CommitCounter().countCommitDelta("")
+        0 == new CommitCounter().countCommitDelta("")
     }
 }
