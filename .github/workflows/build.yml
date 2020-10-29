@@ -12,8 +12,12 @@ jobs:
     runs-on: windows-latest
     steps:
     - uses: actions/checkout@v2   # docs: https://github.com/actions/checkout
-    - name: Fetch all tags
-      run: git fetch --depth=1 origin +refs/tags/*:refs/tags/*      
+      with:
+        # we need a good number of commits to fetch, to generate the release notes
+        # we also need tags so that we can deduct the version
+        # this project is small, so we will fetch all history ('0')
+        # if fetching gets slow we can define a specific # of commits (e.g. '1000')
+        fetch-depth: '0'
     - name: Run build
       run: .\gradlew.bat build --scan --continue
 
