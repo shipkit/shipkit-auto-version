@@ -32,7 +32,7 @@ version=1.0.*
 
 3. Important! When using this plugin on CI make sure that your CI includes tags when making checkout.
 For example, the easiest way to achieve this with GitHub actions is to tweak 'fetch-depth':
-```
+```yaml
 - uses: actions/checkout@v2   # docs: https://github.com/actions/checkout
   with:
     fetch-depth: '0' # '0' will fetch the entire history. For large projects you can put '1000' instead.
