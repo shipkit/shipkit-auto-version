@@ -31,9 +31,11 @@ version=1.0.*
 2. Apply `org.shipkit.shipkit-auto-version` to the root project.
 
 3. Important! When using this plugin on CI make sure that your CI includes tags when making checkout.
-For example, when using GitHub actions, you need add something this:
-```
-run: git fetch --depth=1 origin +refs/tags/*:refs/tags/*
+For example, the easiest way to achieve this with GitHub actions is to tweak 'fetch-depth':
+```yaml
+- uses: actions/checkout@v2   # docs: https://github.com/actions/checkout
+  with:
+    fetch-depth: '0' # '0' will fetch the entire history. For large projects you can put '1000' instead.
 ```
 
 4. Prosper! When running Gradle build the plugin will resolve `*` part of the version and set this value on the Gradle's project.
