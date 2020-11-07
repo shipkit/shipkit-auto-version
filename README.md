@@ -35,7 +35,7 @@ For example, the easiest way to achieve this with GitHub actions is to tweak 'fe
 ```yaml
 - uses: actions/checkout@v2   # docs: https://github.com/actions/checkout
   with:
-    fetch-depth: '0' # '0' will fetch the entire history. For large projects you can put '1000' instead.
+    fetch-depth: '0' # will fetch the entire history
 ```
 
 4. Prosper! When running Gradle build the plugin will resolve `*` part of the version and set this value on the Gradle's project.
