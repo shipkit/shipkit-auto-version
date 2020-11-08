@@ -30,15 +30,23 @@ version=1.0.*
 
 2. Apply `org.shipkit.shipkit-auto-version` to the root project.
 
-3. Important! When using this plugin on CI make sure that your CI includes tags when making checkout.
-For example, the easiest way to achieve this with GitHub actions is to tweak 'fetch-depth':
+3. For your CI, make sure that all tags are fetched (see the next section)
+
+4. Prosper! When running Gradle build the plugin will resolve `*` part of the version and set this value on the Gradle's project.
+
+### Fetch depth on CI
+
+CI systems are often configured by default to perform Git fetch with minimum amount of commits/tags.
+However, our plugin needs tags in order to generate the release notes.
+When using GH actions, please configure your checkout action to fetch the entire history.
+Based on our tests in Mockito project, the checkout of the *entire* Mockito history (dating 2008)
+has negligible performance implication (adds ~2 secs to the checkout).
+
 ```yaml
 - uses: actions/checkout@v2   # docs: https://github.com/actions/checkout
   with:
     fetch-depth: '0' # will fetch the entire history
 ```
-
-4. Prosper! When running Gradle build the plugin will resolve `*` part of the version and set this value on the Gradle's project.
 
 ## shipkit-auto-version.previous-version
 
