@@ -21,6 +21,8 @@ It is a safe dependency because it is tiny, has no dependencies, and it is final
 
 ## Usage
 
+dummy change
+
 1. Create `version.properties` file and drop it to your project root.
 The contents should contain the version spec:
 
