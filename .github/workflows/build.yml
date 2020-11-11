@@ -2,13 +2,14 @@ name: CI
 
 on:
   push:
-    branches: ['**']
+    branches: [master]
     tags-ignore: [v*]
   pull_request:
-    branches: ['**']
+    branches: [master]
 
 jobs:
   windows_build:
+    if: "! contains(toJSON(github.event.commits.*.message), '[skip-ci]')"
     runs-on: windows-latest
     steps:
     - uses: actions/checkout@v2   # docs: https://github.com/actions/checkout
