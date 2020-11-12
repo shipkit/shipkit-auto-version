@@ -1,3 +1,9 @@
+#
+# CI build that also make relases from the main dev branch.
+#
+# - skipping CI: add [skip ci] to the commit message
+# - skipping release: add [skip release] to the commit message
+#
 name: CI
 
 on:
@@ -9,17 +15,12 @@ on:
 
 jobs:
   windows_build:
-    # testing if removing success() in the previous PR will correctly skip the dependent job
     if: "! contains(toJSON(github.event.commits.*.message), '[skip ci]')"
     runs-on: windows-latest
     steps:
     - uses: actions/checkout@v2   # docs: https://github.com/actions/checkout
       with:
-        # we need a good number of commits to fetch, to generate the release notes
-        # we also need tags so that we can deduct the version
-        # this project is small, so we will fetch all history ('0')
-        # if fetching gets slow we can define a specific # of commits (e.g. '1000')
-        fetch-depth: '0'
+        fetch-depth: '0'  # https://github.com/shipkit/shipkit-auto-version#fetch-depth-on-ci
     - name: Run build
       run: .\gradlew.bat build --scan --continue
 
@@ -31,13 +32,13 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2   # docs: https://github.com/actions/checkout
-    - name: Fetch all tags
-      run: git fetch --depth=1 origin +refs/tags/*:refs/tags/*
-      # when we build tags we may need to fetch the 'master' branch, too
+      with:
+        fetch-depth: '0'  # https://github.com/shipkit/shipkit-auto-version#fetch-depth-on-ci
     - name: Run build
       run: ./gradlew build --scan --continue
     - name: Push tag and deploy to plugins.gradle.org
       if: github.event_name == 'push' && github.ref == 'refs/heads/master'
+          && "! contains(toJSON(github.event.commits.*.message), '[skip release]')"
       run: ./gradlew publishPlugins githubRelease --scan
       env:
           # Gradle env variables docs: https://docs.gradle.org/current/userguide/build_environment.html#sec:gradle_environment_variables
