@@ -9,6 +9,7 @@ on:
 
 jobs:
   windows_build:
+    # testing if removing success() in the previous PR will correctly skip the dependent job
     if: "! contains(toJSON(github.event.commits.*.message), '[skip ci]')"
     runs-on: windows-latest
     steps:
