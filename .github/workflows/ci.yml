@@ -37,7 +37,7 @@ jobs:
     - name: Run build
       run: ./gradlew build --scan --continue
     - name: Push tag and deploy to plugins.gradle.org
-      if: github.event_name == 'push' && github.ref == 'refs/heads/master' && "! contains(toJSON(github.event.commits.*.message), '[skip release]')"
+      if: github.event_name == 'push' && github.ref == 'refs/heads/master' && !contains(toJSON(github.event.commits.*.message), '[skip release]')
       run: ./gradlew publishPlugins githubRelease --scan
       env:
           # Gradle env variables docs: https://docs.gradle.org/current/userguide/build_environment.html#sec:gradle_environment_variables
