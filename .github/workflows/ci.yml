@@ -37,7 +37,9 @@ jobs:
     - name: Run build
       run: ./gradlew build --scan --continue
     - name: Push tag and deploy to plugins.gradle.org
-      if: github.event_name == 'push' && github.ref == 'refs/heads/master'
+      if: >-
+          github.event_name == 'push'
+          && github.ref == 'refs/heads/master'
           && "! contains(toJSON(github.event.commits.*.message), '[skip release]')"
       run: ./gradlew publishPlugins githubRelease --scan
       env:
