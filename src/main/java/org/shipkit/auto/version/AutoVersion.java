@@ -47,7 +47,7 @@ class AutoVersion {
     //Exposed for testing so that 'log' can be mocked
     DeductedVersion deductVersion(Logger log, String projectVersion) {
         if (!Project.DEFAULT_VERSION.equals(projectVersion)) {
-            explainVersion(log, projectVersion, "Version was already defined on project.");
+            explainVersion(log, projectVersion, "uses version already specified in the Gradle project");
             return new DeductedVersion(projectVersion, null);
         }
 

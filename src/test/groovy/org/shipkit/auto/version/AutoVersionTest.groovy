@@ -80,13 +80,6 @@ some commit #2
     }
 
     def "uses project version if not default"() {
-        versionFile << "version=2.0.*"
-        runner.run("git", "tag") >> "v2.0.0"
-        runner.run("git", "log", "--pretty=oneline", "v2.0.0..HEAD") >> """
-some commit #1
-some commit #2
-"""
-
         when:
         def v = autoVersion.deductVersion(log, "2.0.5-SNAPSHOT")
 
@@ -94,6 +87,6 @@ some commit #2
         v.version == "2.0.5-SNAPSHOT"
         v.previousVersion == null
         1 * log.lifecycle("Building version '2.0.5-SNAPSHOT'\n" +
-            "  - reason: shipkit-auto-version Version was already defined on project.")
+            "  - reason: shipkit-auto-version uses version already specified in the Gradle project")
     }
 }
