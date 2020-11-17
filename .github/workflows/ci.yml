@@ -28,6 +28,7 @@ jobs:
 
     runs-on: ubuntu-latest
 
+    # We run Windows build first because we will be publishing artifacts from the Ubuntu build (simplifies workflow)
     needs: windows_build
 
     steps:
