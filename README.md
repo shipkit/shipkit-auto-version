@@ -56,12 +56,19 @@ Example:
 ```
 println project.ext.'shipkit-auto-version.previous-version'
 ```
+
+## Version Overriding
+
+It is sometimes useful to manually specify the version when building / publishing (e.g. to publish a `-SNAPSHOT`
+locally). This can be done by setting the gradle project version on the command line with the `-Pversion`
+flag, e.g. `./gradlew publishToMavenLocal -Pversion=1.0.0-SNAPSHOT`.
  
 ## Implementation details
 
 When the plugin is applied to the project it will:
 
  - load the version spec from `version.properties`
+    - if the gradle project already has a set version (e.g. from the command line), use that version
     - if no file or wrong format fail
     - if the spec does not contain the wildcard '*', we just use the version "as is" and return
     - if the spec has wildcard '*' patch version, we resolve the wildcard value from tags and commits:
@@ -71,15 +78,15 @@ When the plugin is applied to the project it will:
     - identifies the latest (newest) version matching version spec
     - compares the version with the version spec:
  
- ```
-case    spec       latest tag      # of commits     result  description
-a       1.0.*      v1.0.5          0                1.0.5   zero new commits                    
-b       1.0.*      v1.0.5          2                1.0.7   two new commits
-c       1.0.*      v1.0.5          5 (2 merge + 1)  1.0.8   two merge commits and new one on top
-d       1.1.*      v1.0.5          5                1.1.0   first x.y.0 version
-e       2.0.*      v1.0.5          5                2.0.0   first z.0.0 version
-f       1.*.5                                       error   unsupported format                   
-```
+| case | spec  | latest tag | -Pversion       | # of commits    | result          | description                          |
+|------|-------|------------|-----------------|-----------------|-----------------|--------------------------------------|
+| a    | 1.0.* | v1.0.5     |                 | 0               | 1.0.5           | zero new commits                     |
+| b    | 1.0.* | v1.0.5     |                 | 2               | 1.0.7           | two new commits                      |
+| c    | 1.0.* | v1.0.5     |                 | 5 (2 merge + 1) | 1.0.8           | two merge commits and new one on top |
+| d    | 1.1.* | v1.0.5     |                 | 5               | 1.1.0           | first x.y.0 version                  |
+| e    | 2.0.* | v1.0.5     |                 | 5               | 2.0.0           | first z.0.0 version                  |
+| f    | 1.*.5 |            |                 |                 | error           | unsupported format                   |
+| g    | 1.0.* | v1.0.5     | 1.0.10-SNAPSHOT | [any]           | 1.0.10-SNAPSHOT | version overridden from CLI argument |
 
  - in case a),b) we are resolving the wildcard based on # of commits on top of the tag
     - run `git log` to identify # of commits 
@@ -98,6 +105,7 @@ f       1.*.5                                       error   unsupported format
     The patch version will be `8` i.e. 5 plus a sum of those two numbers. 
 
  - in case d),e) use '0' as patch version
+ - in case g) the user manually specified the version on the command line
 
 ## Similar plugins
 

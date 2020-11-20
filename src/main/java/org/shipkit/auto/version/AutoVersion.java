@@ -1,6 +1,7 @@
 package org.shipkit.auto.version;
 
 import com.github.zafarkhaja.semver.Version;
+import org.gradle.api.Project;
 import org.gradle.api.logging.Logger;
 import org.gradle.api.logging.Logging;
 
@@ -31,9 +32,11 @@ class AutoVersion {
 
     /**
      * Deduct version based on existing tags (will run 'git tag'), and the version spec from versionFile field.
+     *
+     * @param projectVersion the version of the gradle project before running the plugin
      */
-    DeductedVersion deductVersion() {
-        return deductVersion(LOG);
+    DeductedVersion deductVersion(String projectVersion) {
+        return deductVersion(LOG, projectVersion);
     }
 
     private static void explainVersion(Logger log, String version, String reason) {
@@ -42,7 +45,12 @@ class AutoVersion {
     }
 
     //Exposed for testing so that 'log' can be mocked
-    DeductedVersion deductVersion(Logger log) {
+    DeductedVersion deductVersion(Logger log, String projectVersion) {
+        if (!Project.DEFAULT_VERSION.equals(projectVersion)) {
+            explainVersion(log, projectVersion, "uses version already specified in the Gradle project");
+            return new DeductedVersion(projectVersion, null);
+        }
+
         String spec = VersionSpec.readVersionSpec(versionFile);
         if (!spec.endsWith("*")) {
             //if there is no wildcard we will use the version 'as is'
