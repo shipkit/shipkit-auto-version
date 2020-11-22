@@ -39,7 +39,8 @@ jobs:
       run: ./gradlew build --scan --continue
     - name: Push tag and deploy to plugins.gradle.org
       if: github.event_name == 'push' 
-          && github.ref == 'refs/heads/master' 
+          && github.ref == 'refs/heads/master'
+          && github.repository == 'shipkit/shipkit-auto-version'
           && !contains(toJSON(github.event.commits.*.message), '[skip release]')
       run: ./gradlew publishPlugins githubRelease --scan
       env:
