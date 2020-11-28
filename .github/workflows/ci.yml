@@ -14,9 +14,18 @@ on:
     branches: [master]
 
 jobs:
+  gradle_wrapper_validation:
+    steps:
+    - uses: actions/checkout@v2   # docs: https://github.com/actions/checkout
+      with:
+        fetch-depth: '0'  # https://github.com/shipkit/shipkit-auto-version#fetch-depth-on-ci
+    - name: Gradle wrapper validation
+      uses: gradle/wrapper-validation-action@v1
+
   windows_build:
     if: "! contains(toJSON(github.event.commits.*.message), '[skip ci]')"
     runs-on: windows-latest
+    needs: gradle_wrapper_validation
     steps:
     - uses: actions/checkout@v2   # docs: https://github.com/actions/checkout
       with:
@@ -29,7 +38,7 @@ jobs:
     runs-on: ubuntu-latest
 
     # We run Windows build first because we will be publishing artifacts from the Ubuntu build (simplifies workflow)
-    needs: windows_build
+    needs: [windows_build, gradle_wrapper_validation]
 
     steps:
     - uses: actions/checkout@v2   # docs: https://github.com/actions/checkout
@@ -38,7 +47,7 @@ jobs:
     - name: Run build
       run: ./gradlew build --scan --continue
     - name: Push tag and deploy to plugins.gradle.org
-      if: github.event_name == 'push' 
+      if: github.event_name == 'push'
           && github.ref == 'refs/heads/master'
           && github.repository == 'shipkit/shipkit-auto-version'
           && !contains(toJSON(github.event.commits.*.message), '[skip release]')
