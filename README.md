@@ -19,6 +19,7 @@ It is a safe dependency because it is tiny, has no dependencies, and it is final
 - https://github.com/shipkit/shipkit-auto-version (this project)
 - https://github.com/linkedin/ambry
 - https://github.com/mockito/mockito-scala
+- https://github.com/mockito/mockito-testng
 
 ## Usage
 
