@@ -1,7 +1,6 @@
 package org.shipkit.auto.version
 
 
-import org.gradle.api.Project
 import org.gradle.testfixtures.ProjectBuilder
 import spock.lang.Specification
 
@@ -34,10 +33,10 @@ class AutoVersionPluginTest extends Specification {
         runner.run("git", "merge", "PR-10", "--no-ff", "-m", "Merge pull request #10 from ...")
 
         when:
-        def v = new AutoVersion(project.projectDir).deductVersion(Project.DEFAULT_VERSION)
+        project.getPlugins().apply(AutoVersionPlugin)
 
         then:
-        v.version == "1.0.1"
-        v.previousVersion == "1.0.0"
+        project.version == "1.0.1"
+        project.ext.'shipkit-auto-version.previous-version' == "1.0.0"
     }
 }

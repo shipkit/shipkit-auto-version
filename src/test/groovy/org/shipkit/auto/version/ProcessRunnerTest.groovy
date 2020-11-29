@@ -1,15 +1,11 @@
 package org.shipkit.auto.version
 
-import org.junit.Rule
-import org.junit.rules.TemporaryFolder
+
 import spock.lang.IgnoreIf
-import spock.lang.Specification
 
 //ignore the test when there is no 'ls' utility
 @IgnoreIf({ !commandAvailable("ls") })
-class ProcessRunnerTest extends Specification {
-
-    @Rule TemporaryFolder tmp = new TemporaryFolder()
+class ProcessRunnerTest extends TmpFolderSpecification {
 
     def "runs processes and returns output"() {
         File dir = tmp.newFolder()
@@ -24,10 +20,30 @@ class ProcessRunnerTest extends Specification {
         output.contains("hey joe.jar")
     }
 
+    def "process start failure"() {
+        when:
+        new ProcessRunner(tmp.root).run("kabooom")
+
+        then:
+        def e = thrown(ShipkitAutoVersionException)
+        e.message == "[shipkit-auto-version] Problems executing command:\n  kabooom"
+    }
+
+    def "process non zero exit"() {
+        when:
+        new ProcessRunner(tmp.root).run("ls", "--kaboom")
+
+        then:
+        def e = thrown(ShipkitAutoVersionException)
+        e.message.startsWith """[shipkit-auto-version] Problems executing command (exit code: 1): ls --kaboom
+Output:
+ls: illegal option"""
+    }
+
     static boolean commandAvailable(String command) {
         try {
             return command.execute().waitFor() == 0
-        } catch (Exception e) {
+        } catch (ignored) {
             return false
         }
     }

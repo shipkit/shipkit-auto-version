@@ -6,6 +6,9 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.Arrays;
 
+import static java.lang.String.join;
+import static java.util.Arrays.asList;
+
 /**
  * Runs command in provided working dir.
  */
@@ -25,12 +28,14 @@ class ProcessRunner {
             output = readFully(new BufferedReader(new InputStreamReader(process.getInputStream())));
             exitValue = process.waitFor();
         } catch (Exception e) {
-            throw new RuntimeException("Problems executing command:\n  " + Arrays.toString(commandLine), e);
+            String cmdLine = join(" ", asList(commandLine));
+            throw new ShipkitAutoVersionException("Problems executing command:\n  " + cmdLine, e);
         }
 
         if (exitValue != 0) {
-            throw new RuntimeException(
-                    "Problems executing command (exit code: " + exitValue + "): " + Arrays.toString(commandLine) + "\n" +
+            String cmdLine = join(" ", asList(commandLine));
+            throw new ShipkitAutoVersionException(
+                    "Problems executing command (exit code: " + exitValue + "): " + cmdLine + "\n" +
                     "Output:\n" + output);
         }
 

@@ -5,6 +5,7 @@
 # Ignore Gradle and IDEA build output directory
 build
 out
+.shelf
 
 *.iml
 *.ipr
