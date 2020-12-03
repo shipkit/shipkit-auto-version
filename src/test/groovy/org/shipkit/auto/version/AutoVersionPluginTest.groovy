@@ -38,5 +38,6 @@ class AutoVersionPluginTest extends Specification {
         then:
         project.version == "1.0.1"
         project.ext.'shipkit-auto-version.previous-version' == "1.0.0"
+        project.ext.'shipkit-auto-version.previous-tag' == "v1.0.0"
     }
 }

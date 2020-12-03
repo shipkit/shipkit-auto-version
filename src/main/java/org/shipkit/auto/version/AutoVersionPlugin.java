@@ -12,5 +12,11 @@ public class AutoVersionPlugin implements Plugin<Project> {
         DeductedVersion version = new AutoVersion(project.getProjectDir()).deductVersion(project.getVersion().toString());
         project.allprojects(p -> p.setVersion(version.getVersion()));
         project.getExtensions().getExtraProperties().set("shipkit-auto-version.previous-version", version.getPreviousVersion());
+
+        if (version.getPreviousVersion() != null) {
+            project.getExtensions().getExtraProperties().set("shipkit-auto-version.previous-tag", "v"+version.getPreviousVersion());
+        } else {
+            project.getExtensions().getExtraProperties().set("shipkit-auto-version.previous-tag", null);
+        }
     }
 }
