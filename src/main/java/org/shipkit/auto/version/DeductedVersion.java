@@ -13,11 +13,13 @@ class DeductedVersion {
 
     private final String version;
     private final String previousVersion;
+    private final String previousTag;
 
     DeductedVersion(String version, Optional<Version> previousVersion) {
         Objects.requireNonNull(version, "version cannot be null");
         this.version = version;
         this.previousVersion = previousVersion.map(Version::toString).orElse(null);
+        this.previousTag = previousVersion.isPresent() ? TagConvention.tagFor(this.previousVersion) : null;
     }
 
     /**
@@ -36,5 +38,10 @@ class DeductedVersion {
     @Nullable
     String getPreviousVersion() {
         return previousVersion;
+    }
+
+    @Nullable
+    String getPreviousTag() {
+        return previousTag;
     }
 }
