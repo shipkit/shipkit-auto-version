@@ -19,7 +19,7 @@ class DeductedVersion {
         Objects.requireNonNull(version, "version cannot be null");
         this.version = version;
         this.previousVersion = previousVersion.map(Version::toString).orElse(null);
-        this.previousTag = previousVersion.isPresent() ? TagConvention.tagFor(this.previousVersion) : null;
+        this.previousTag = previousVersion.map(v -> TagConvention.tagFor(v.toString())).orElse(null);
     }
 
     /**
