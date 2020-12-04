@@ -40,6 +40,14 @@ class DeductedVersion {
         return previousVersion;
     }
 
+    /**
+     * Previous tag.
+     * Returned value is the previous version with 'v' prefix added in accordance
+     * with supported, in {@link TagConvention} class, tag naming convention
+     * (e.g. for previous version 1.0.0 the previous tag could be v1.0.0).
+     * The returned previous tag value can be null when previous version is null:
+     * {@link #getPreviousVersion()}
+     */
     @Nullable
     String getPreviousTag() {
         return previousTag;
