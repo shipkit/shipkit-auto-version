@@ -10,4 +10,10 @@ class DeductedVersionTest extends Specification {
         "0.0.9" == new DeductedVersion("1.0.0", Optional.of(Version.valueOf("0.0.9"))).previousVersion
         null == new DeductedVersion("1.0.0", Optional.empty()).previousVersion
     }
+
+    def "nullable previous tag"() {
+        expect:
+        "v0.0.9" == new DeductedVersion("1.0.0", Optional.of(Version.valueOf("0.0.9"))).previousTag
+        null == new DeductedVersion("1.0.0", Optional.empty()).previousTag
+    }
 }

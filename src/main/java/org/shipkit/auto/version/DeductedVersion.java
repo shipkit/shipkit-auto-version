@@ -13,11 +13,13 @@ class DeductedVersion {
 
     private final String version;
     private final String previousVersion;
+    private final String previousTag;
 
     DeductedVersion(String version, Optional<Version> previousVersion) {
         Objects.requireNonNull(version, "version cannot be null");
         this.version = version;
         this.previousVersion = previousVersion.map(Version::toString).orElse(null);
+        this.previousTag = previousVersion.map(v -> TagConvention.tagFor(v.toString())).orElse(null);
     }
 
     /**
@@ -36,5 +38,18 @@ class DeductedVersion {
     @Nullable
     String getPreviousVersion() {
         return previousVersion;
+    }
+
+    /**
+     * Previous tag.
+     * Returned value is the previous version with 'v' prefix added in accordance
+     * with supported, in {@link TagConvention} class, tag naming convention
+     * (e.g. for previous version 1.0.0 the previous tag could be v1.0.0).
+     * The returned previous tag value can be null when previous version is null:
+     * {@link #getPreviousVersion()}
+     */
+    @Nullable
+    String getPreviousTag() {
+        return previousTag;
     }
 }
