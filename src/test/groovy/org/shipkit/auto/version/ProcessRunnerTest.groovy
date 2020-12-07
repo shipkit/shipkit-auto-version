@@ -1,10 +1,8 @@
 package org.shipkit.auto.version
 
-
 import spock.lang.IgnoreIf
 
-//ignore the test when there is no 'ls' utility
-@IgnoreIf({ !commandAvailable("ls") })
+
 class ProcessRunnerTest extends TmpFolderSpecification {
 
     def "runs processes and returns output"() {
@@ -35,9 +33,10 @@ class ProcessRunnerTest extends TmpFolderSpecification {
 
         then:
         def e = thrown(ShipkitAutoVersionException)
-        e.message.startsWith """[shipkit-auto-version] Problems executing command (exit code: 1): ls --kaboom
+        e.message.startsWith "[shipkit-auto-version] Problems executing command (exit code: "
+        e.message.contains """ls --kaboom
 Output:
-ls: illegal option"""
+ls: """
     }
 
     static boolean commandAvailable(String command) {
