@@ -56,7 +56,7 @@ has negligible performance implication (adds ~2 secs to the checkout).
 This plugin exposes an 'ext' property `shipkit-auto-version.previous-version` that can be used to get access to the previous version.
 Example:
 
-```
+```groovy
 println project.ext.'shipkit-auto-version.previous-version'
 ```
 ### shipkit-auto-version.previous-tag
@@ -65,10 +65,10 @@ version's tag. It allows to get previous revision in convenient way (eg. for gen
 plugin as in example below).
 Example:
 
-```
+```groovy
 tasks.named("generateChangelog") {
    previousRevision = project.ext.'shipkit-auto-version.previous-tag'
-   ...
+   //...
 }
 ```
 
