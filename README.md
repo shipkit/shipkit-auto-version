@@ -50,13 +50,26 @@ has negligible performance implication (adds ~2 secs to the checkout).
     fetch-depth: '0' # will fetch the entire history
 ```
 
-## shipkit-auto-version.previous-version
+## Properties exposed by the plugin
 
+### shipkit-auto-version.previous-version
 This plugin exposes an 'ext' property `shipkit-auto-version.previous-version` that can be used to get access to the previous version.
 Example:
 
-```
+```groovy
 println project.ext.'shipkit-auto-version.previous-version'
+```
+### shipkit-auto-version.previous-tag
+Shipkit Auto Version exposes also `shipkit-auto-version.previous-tag` 'ext' property that gives access to the previous
+version's tag. It allows to get previous revision in convenient way (eg. for generating changelog with Shipkit Changelog
+plugin as in example below).
+Example:
+
+```groovy
+tasks.named("generateChangelog") {
+   previousRevision = project.ext.'shipkit-auto-version.previous-tag'
+   //...
+}
 ```
 
 ## Version Overriding
