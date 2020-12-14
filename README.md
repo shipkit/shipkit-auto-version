@@ -1,16 +1,30 @@
 [![CI](https://github.com/shipkit/shipkit-auto-version/workflows/CI/badge.svg)](https://github.com/shipkit/shipkit-auto-version/actions)
 [![Gradle Portal](https://img.shields.io/maven-metadata/v/https/plugins.gradle.org/m2/org/shipkit/shipkit-auto-version/maven-metadata.xml.svg?label=Gradle%20Plugins)](https://plugins.gradle.org/plugin/org.shipkit.shipkit-auto-version)
 
-# Shipkit auto-version Gradle plugin
+# Shipkit
 
-This plugin deducts the version for the Gradle project to streamline continuous delivery.
+## Vision
+
+Software developers spend all their creative energy on productive work.
+There is absolutely **zero** release overhead because all software is released *automatically*.
+
+## Mission
+
+Encourage and help software developers set up their releases to be fully automated.
+
+# shipkit-auto-version Gradle Plugin
+
+Our Gradle plugin ```shipkit-auto-version``` deducts the version for the Gradle project to streamline continuous delivery.
 You drop a ```version.properties``` file to your repo with content like `version=1.0.*`. 
-The plugin will resolve the `*` part of the version based on the latest release tag and commits.
+The plugin will resolve the `*` part of the version based on the latest release tag and the number of commits.
 This way you can set up the project for continuous delivery and release every merged pull request with nicely incremented version. 
 No more infamous "version bump" commits in every release!
 
-This plugin is **tiny** and has a single dependency on https://github.com/zafarkhaja/jsemver.
+```shipkit-auto-version``` plugin is **tiny** and has a single dependency on [jSemver](https://github.com/zafarkhaja/jsemver).
 It is a safe dependency because it is tiny, has no dependencies, and it is final (no code changes since 2015 - it wraps semver protocol that had [no changes since 2013](https://github.com/semver/semver/tree/v2.0.0)).
+
+Do you want to automate changelog generation?
+Check out [shipkit-changelog](https://github.com/shipkit/shipkit-changelog) plugin that neatly integrate with ```shipkit-auto-version``` plugin.
 
 ## Customers / sample projects
 
