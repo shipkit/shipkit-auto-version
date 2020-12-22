@@ -153,4 +153,9 @@ The plugin has many features and thus is much more complex than our plugin.
 
 Use the plugin that works best for you and push every change to production!
 
-Discussion about this use case: https://github.com/mockito/shipkit/issues/395 
+Discussion about this use case: https://github.com/mockito/shipkit/issues/395
+
+# Contributing
+
+This project loves contributions!
+For more info how to work with this project check out the *contributing* section in the sibling plugin [shipkit-changelog](https://github.com/shipkit/shipkit-changelog#contributing).
