@@ -46,4 +46,5 @@ tasks.named("githubRelease") {
     repository = genTask.repository
     changelog = genTask.outputFile
     writeToken = System.getenv("GH_WRITE_TOKEN")
+    newTagRevision = System.getenv("GITHUB_SHA")
 }
