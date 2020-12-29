@@ -32,7 +32,7 @@ jobs:
       with:
         fetch-depth: '0'  # https://github.com/shipkit/shipkit-auto-version#fetch-depth-on-ci
     - name: Run build
-      run: .\gradlew.bat build --scan --continue
+      run: .\gradlew.bat build --continue
 
   build:
 
@@ -46,13 +46,13 @@ jobs:
       with:
         fetch-depth: '0'  # https://github.com/shipkit/shipkit-auto-version#fetch-depth-on-ci
     - name: Run build
-      run: ./gradlew build --scan --continue
+      run: ./gradlew build --continue
     - name: Push tag and deploy to plugins.gradle.org
       if: github.event_name == 'push'
           && github.ref == 'refs/heads/master'
           && github.repository == 'shipkit/shipkit-auto-version'
           && !contains(toJSON(github.event.commits.*.message), '[skip release]')
-      run: ./gradlew publishPlugins githubRelease --scan
+      run: ./gradlew publishPlugins githubRelease
       env:
           # Gradle env variables docs: https://docs.gradle.org/current/userguide/build_environment.html#sec:gradle_environment_variables
           GRADLE_PUBLISH_KEY: ${{ secrets.GRADLE_PUBLISH_KEY }}
