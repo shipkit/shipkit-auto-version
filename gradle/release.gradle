@@ -36,7 +36,7 @@ if (ext.'gradle.publish.key' && ext.'gradle.publish.secret') {
 
 tasks.named("generateChangelog") {
     previousRevision = project.ext.'shipkit-auto-version.previous-tag'
-    readOnlyToken = "a0a4c0f41c200f7c653323014d6a72a127764e17"
+    githubToken = System.getenv("GITHUB_TOKEN")
     repository = "shipkit/shipkit-auto-version"
 }
 
@@ -45,6 +45,6 @@ tasks.named("githubRelease") {
     dependsOn genTask
     repository = genTask.repository
     changelog = genTask.outputFile
-    writeToken = System.getenv("GH_WRITE_TOKEN")
+    githubToken = System.getenv("GITHUB_TOKEN")
     newTagRevision = System.getenv("GITHUB_SHA")
 }
