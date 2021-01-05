@@ -2,7 +2,7 @@ apply plugin: "java-gradle-plugin"
 apply plugin: "com.gradle.plugin-publish"
 apply plugin: "org.shipkit.shipkit-auto-version"
 apply plugin: "org.shipkit.shipkit-changelog"
-apply plugin: "org.shipkit.shipkit-gh-release"
+apply plugin: "org.shipkit.shipkit-github-release"
 
 // docs: https://plugins.gradle.org/docs/publish-plugin
 gradlePlugin {
