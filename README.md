@@ -1,5 +1,5 @@
 [![CI](https://github.com/shipkit/shipkit-auto-version/workflows/CI/badge.svg)](https://github.com/shipkit/shipkit-auto-version/actions)
-[![Gradle Portal](https://img.shields.io/maven-metadata/v/https/plugins.gradle.org/m2/org/shipkit/shipkit-auto-version/maven-metadata.xml.svg?label=Gradle%20Plugins)](https://plugins.gradle.org/plugin/org.shipkit.shipkit-auto-version)
+[![Gradle Plugin Portal](https://img.shields.io/maven-metadata/v/https/plugins.gradle.org/m2/org/shipkit/shipkit-auto-version/maven-metadata.xml.svg?label=Version)](https://plugins.gradle.org/plugin/org.shipkit.shipkit-auto-version)
 
 # Shipkit
 
@@ -37,18 +37,26 @@ Check out [shipkit-changelog](https://github.com/shipkit/shipkit-changelog) plug
 
 ## Usage
 
-1. Create `version.properties` file and drop it to your project root.
+1. Apply `org.shipkit.shipkit-auto-version` to the root project.
+   Use the *highest* version available in the Gradle Plugin Portal:
+   [![Gradle Plugin Portal](https://img.shields.io/maven-metadata/v/https/plugins.gradle.org/m2/org/shipkit/shipkit-auto-version/maven-metadata.xml.svg?label=version:)](https://plugins.gradle.org/plugin/org.shipkit.shipkit-auto-version)
+
+```
+plugins {
+  id "org.shipkit.shipkit-auto-version" version "x.y.z"
+}
+```
+
+2. Create `version.properties` file and drop it to your project root.
 The contents should contain the version spec:
 
 ```
 version=1.0.*
 ```
 
-2. Apply `org.shipkit.shipkit-auto-version` to the root project.
-
 3. For your CI, make sure that all tags are fetched (see the next section)
 
-4. Prosper! When running Gradle build the plugin will resolve `*` part of the version and set this value on the Gradle's project.
+4. Prosper! When running Gradle the plugin will resolve `*` part of the version and set this value on the Gradle's project.
 
 ### Fetch depth on CI
 
