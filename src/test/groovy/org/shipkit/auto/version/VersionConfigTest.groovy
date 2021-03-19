@@ -2,10 +2,10 @@ package org.shipkit.auto.version
 
 import spock.lang.Unroll
 
-import static RequestedVersion.parseVersionFile
-import static org.shipkit.auto.version.RequestedVersion.isSupportedVersion
+import static VersionConfig.parseVersionFile
+import static VersionConfig.isSupportedVersion
 
-class RequestedVersionTest extends TmpFolderSpecification {
+class VersionConfigTest extends TmpFolderSpecification {
 
     def "loads spec from file"() {
         expect:
@@ -53,7 +53,7 @@ class RequestedVersionTest extends TmpFolderSpecification {
     @Unroll
     def "bad version format: #spec"() {
         when:
-        new RequestedVersion(spec)
+        new VersionConfig(spec, "v")
 
         then:
         def e = thrown(ShipkitAutoVersionException)

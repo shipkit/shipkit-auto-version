@@ -40,19 +40,20 @@ class AutoVersion {
 
     //Exposed for testing so that 'log' can be mocked
     DeductedVersion deductVersion(Logger log, String projectVersion) {
-        RequestedVersion requestedVersion = RequestedVersion.parseVersionFile(versionFile);
+        VersionConfig config = VersionConfig.parseVersionFile(versionFile);
         Optional<Version> previousVersion = Optional.empty();
         try {
-            Collection<Version> versions = new VersionsProvider(runner).getAllVersions();
-            previousVersion = new PreviousVersionFinder().findPreviousVersion(versions, requestedVersion);
-            String nextVersion = new NextVersionPicker(runner, log).pickNextVersion(previousVersion, requestedVersion, projectVersion);
-            return new DeductedVersion(nextVersion, previousVersion);
+            Collection<Version> versions = new VersionsProvider(runner).getAllVersions(config.getTagPrefix());
+            previousVersion = new PreviousVersionFinder().findPreviousVersion(versions, config);
+            String nextVersion = new NextVersionPicker(runner, log).pickNextVersion(previousVersion,
+                    config, projectVersion, config.getTagPrefix());
+            return new DeductedVersion(nextVersion, previousVersion, config.getTagPrefix());
         } catch (Exception e) {
             String message = "caught an exception, falling back to reasonable default";
             log.debug("shipkit-auto-version " + message, e);
-            String v = requestedVersion.toString().replace("*", "unspecified");
+            String v = config.toString().replace("*", "unspecified");
             explainVersion(log, v, message + "\n  - run with --debug for more info");
-            return new DeductedVersion(v, previousVersion);
+            return new DeductedVersion(v, previousVersion, config.getTagPrefix());
         }
     }
 }

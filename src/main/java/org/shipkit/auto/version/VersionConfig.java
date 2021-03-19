@@ -8,20 +8,23 @@ import java.io.IOException;
 import java.util.Properties;
 
 /**
- * Requested version object representing the version value specified in the version file.
+ * Version configuration representing the version file.
  */
-class RequestedVersion {
+class VersionConfig {
 
     private final String requestedVersion;
+    private final String tagPrefix;
 
     /**
-     * Creates requested version object based on the requestedVersion String specification.
+     * Creates configuration object.
      * Throws an exception if the supplied requestedVersion has invalid format.
      *
      * @param requestedVersion requested version specification, i.e. '1.0.*', '2.0.0'
+     * @param tagPrefix tag prefix, typically "v" or "release-" or an empty String
      */
-    RequestedVersion(String requestedVersion) {
+    VersionConfig(String requestedVersion, String tagPrefix) {
         this.requestedVersion = requestedVersion;
+        this.tagPrefix = tagPrefix;
         String test = isWildcard()?
                 newPatchVersion(): //this will create a version we can validate
                 requestedVersion;
@@ -40,14 +43,14 @@ class RequestedVersion {
     }
 
     /**
-     * Reads the version specification from provided file.
+     * Reads the configuration from provided file.
      * Throws exception message with actionable message when version file does not exist
-     * or when it does not contain correctly formatted version value.
+     * or when it does not contain correctly formatted content.
      *
-     * @param versionFile file that has the version specification
-     * @return validated requested version object
+     * @param versionFile file that has the version configuration
+     * @return validated version configuration
      */
-    static RequestedVersion parseVersionFile(File versionFile) {
+    static VersionConfig parseVersionFile(File versionFile) {
         Properties p = new Properties();
         try {
             p.load(new FileReader(versionFile));
@@ -63,7 +66,10 @@ class RequestedVersion {
                     "File '" + versionFile.getName() + "' is missing the 'version' property\n" +
                     "  Correct examples: 'version=1.0.*', 'version=2.10.100'");
         }
-        return new RequestedVersion(v);
+
+        String tagPrefix = (String) p.getOrDefault("tagPrefix", "v");
+
+        return new VersionConfig(v, tagPrefix);
     }
 
     /**
@@ -85,5 +91,9 @@ class RequestedVersion {
 
     public String toString() {
         return requestedVersion;
+    }
+
+    public String getTagPrefix() {
+        return tagPrefix;
     }
 }

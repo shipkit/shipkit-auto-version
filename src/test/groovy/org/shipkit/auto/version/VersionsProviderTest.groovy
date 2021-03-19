@@ -16,7 +16,7 @@ class VersionsProviderTest extends Specification {
         runner.run("git", "tag") >> ""
 
         expect:
-        provider.allVersions.isEmpty()
+        provider.getAllVersions("v").isEmpty()
     }
 
     def "gets all versions from tags"() {
@@ -34,6 +34,18 @@ class VersionsProviderTest extends Specification {
         """
 
         expect:
-        provider.allVersions.toString() == "[1.0.1, 1.0.2, 2.0.0, 22.333.4444]"
+        provider.getAllVersions("v").toString() == "[1.0.1, 1.0.2, 2.0.0, 22.333.4444]"
+    }
+
+    def "gets all versions when no tag prefix"() {
+        runner.run("git", "tag") >> """
+            1.0.1
+            1.0.2
+            foo
+            1.0.0-beta
+        """
+
+        expect:
+        provider.getAllVersions("").toString() == "[1.0.1, 1.0.2]"
     }
 }
