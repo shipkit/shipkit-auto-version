@@ -11,17 +11,17 @@ import java.util.Optional;
 class PreviousVersionFinder {
 
     /**
-     * Finds previous version based on the requested version specification
+     * Finds previous version based on the version specification
      */
-    Optional<Version> findPreviousVersion(Collection<Version> versions, RequestedVersion requestedVersion) {
-        if (!requestedVersion.isWildcard()) {
+    Optional<Version> findPreviousVersion(Collection<Version> versions, VersionConfig config) {
+        if (!config.isWildcard()) {
             //Requested version is a concrete version like 1.0.0 (no wildcard).
             //We just find the previous version
-            return findPrevious(versions, Version.valueOf(requestedVersion.toString()));
+            return findPrevious(versions, Version.valueOf(config.toString()));
         }
 
         Optional<Version> max = versions.stream()
-                .filter(v -> v.satisfies(requestedVersion.toString()))
+                .filter(v -> v.satisfies(config.toString()))
                 .max(Version::compareTo);
 
         if (max.isPresent()) {
@@ -30,7 +30,7 @@ class PreviousVersionFinder {
 
         //We did not find it. This happens in example scenario:
         // versions are 0.0.1, 0.0.2 and the requested version is 0.1.*
-        String newPatchVersion = requestedVersion.newPatchVersion();
+        String newPatchVersion = config.newPatchVersion();
         return findPrevious(versions, Version.valueOf(newPatchVersion));
     }
 

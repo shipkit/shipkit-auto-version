@@ -18,7 +18,7 @@ class NextVersionPickerTest extends Specification {
     def "picks version as configured on the Gradle project"() {
         when:
         def v = picker.pickNextVersion(
-                Optional.empty(), new RequestedVersion("1.0.*"), "1.1.0")
+                Optional.empty(), new VersionConfig("1.0.*", "v"), "1.1.0", "v")
 
         then:
         v == "1.1.0"
@@ -29,7 +29,7 @@ class NextVersionPickerTest extends Specification {
     def "picks version 'as is' because the wildcard is not used"() {
         when:
         def v = picker.pickNextVersion(
-                Optional.empty(), new RequestedVersion("1.0.0"), Project.DEFAULT_VERSION)
+                Optional.empty(), new VersionConfig("1.0.0", "v"), Project.DEFAULT_VERSION, "v")
 
         then:
         v == "1.0.0"
@@ -40,7 +40,7 @@ class NextVersionPickerTest extends Specification {
     def "picks new patch version when no previous version"() {
         when:
         def v = picker.pickNextVersion(
-                Optional.empty(), new RequestedVersion("1.0.*"), Project.DEFAULT_VERSION)
+                Optional.empty(), new VersionConfig("1.0.*", "v"), Project.DEFAULT_VERSION, "v")
 
         then:
         v == "1.0.0"
@@ -52,8 +52,8 @@ class NextVersionPickerTest extends Specification {
         when:
         def v = picker.pickNextVersion(
                 Optional.of(Version.valueOf("0.0.9")),
-                new RequestedVersion("1.0.*"),
-                Project.DEFAULT_VERSION)
+                new VersionConfig("1.0.*", "v"),
+                Project.DEFAULT_VERSION, "v")
 
         then:
         v == "1.0.0"
@@ -69,13 +69,28 @@ some commit #2
 
         when:
         def v = picker.pickNextVersion(
-                    Optional.of(Version.valueOf("1.0.0")),
-                    new RequestedVersion("1.0.*"),
-                    Project.DEFAULT_VERSION)
+                Optional.of(Version.valueOf("1.0.0")),
+                new VersionConfig("1.0.*", "v"),
+                Project.DEFAULT_VERSION, "v")
 
         then:
         v == "1.0.2"
         1 * log.lifecycle("Building version '1.0.2'\n" +
                 "  - reason: shipkit-auto-version deducted version based on previous tag: '1.0.0'")
+    }
+
+    def "picks version when no tag prefix"() {
+        runner.run("git", "log", "--pretty=oneline", "1.0.0..HEAD") >> """
+some commit
+"""
+
+        when:
+        def v = picker.pickNextVersion(
+                Optional.of(Version.valueOf("1.0.0")),
+                new VersionConfig("1.0.*", ""),
+                Project.DEFAULT_VERSION, "")
+
+        then:
+        v == "1.0.1"
     }
 }

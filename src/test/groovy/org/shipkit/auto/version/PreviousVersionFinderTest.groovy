@@ -25,6 +25,6 @@ class PreviousVersionFinderTest extends Specification {
     String prev(Collection<String> versions, String target) {
         new PreviousVersionFinder().findPreviousVersion(
                 versions.collect { valueOf(it) },
-                new RequestedVersion(target)).orElse(null)
+                new VersionConfig(target, "v")).orElse(null)
     }
 }

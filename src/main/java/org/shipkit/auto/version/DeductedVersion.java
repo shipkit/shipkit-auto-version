@@ -14,12 +14,14 @@ class DeductedVersion {
     private final String version;
     private final String previousVersion;
     private final String previousTag;
+    private final String tagPrefix;
 
-    DeductedVersion(String version, Optional<Version> previousVersion) {
+    DeductedVersion(String version, Optional<Version> previousVersion, String tagPrefix) {
+        this.tagPrefix = tagPrefix;
         Objects.requireNonNull(version, "version cannot be null");
         this.version = version;
         this.previousVersion = previousVersion.map(Version::toString).orElse(null);
-        this.previousTag = previousVersion.map(v -> TagConvention.tagFor(v.toString())).orElse(null);
+        this.previousTag = previousVersion.map(v -> TagConvention.tagFor(v.toString(), tagPrefix)).orElse(null);
     }
 
     /**
@@ -42,9 +44,9 @@ class DeductedVersion {
 
     /**
      * Previous tag.
-     * Returned value is the previous version with 'v' prefix added in accordance
-     * with supported, in {@link TagConvention} class, tag naming convention
-     * (e.g. for previous version 1.0.0 the previous tag could be v1.0.0).
+     * Returned value is the previous version with optional tag prefix.
+     * Shipkit and Mockito projects use 'v1.2.3' naming convention for tags
+     * so tag for version 1.0.0 would be v1.0.0.
      * The returned previous tag value can be null when previous version is null:
      * {@link #getPreviousVersion()}
      */

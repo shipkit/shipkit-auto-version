@@ -6,8 +6,6 @@ import org.gradle.api.logging.Logger;
 
 import java.util.Optional;
 
-import static java.util.Arrays.asList;
-
 /**
  * Picks the next version to use.
  */
@@ -23,22 +21,23 @@ class NextVersionPicker {
     /**
      * Picks the next version to use based on the input parameters
      */
-    String pickNextVersion(Optional<Version> previousVersion, RequestedVersion requestedVersion, String projectVersion) {
+    String pickNextVersion(Optional<Version> previousVersion, VersionConfig config, String projectVersion,
+                           String tagPrefix) {
         if (!Project.DEFAULT_VERSION.equals(projectVersion)) {
             explainVersion(log, projectVersion, "uses version already specified in the Gradle project");
             return projectVersion;
         }
 
-        if (!requestedVersion.isWildcard()) {
+        if (!config.isWildcard()) {
             //if there is no wildcard we will use the version 'as is'
-            explainVersion(log, requestedVersion.toString(), "uses verbatim version from version file");
-            return requestedVersion.toString();
+            explainVersion(log, config.toString(), "uses verbatim version from version file");
+            return config.toString();
         }
 
-        if (previousVersion.isPresent() && previousVersion.get().satisfies(requestedVersion.toString())) {
+        if (previousVersion.isPresent() && previousVersion.get().satisfies(config.toString())) {
             Version prev = previousVersion.get();
             String gitOutput = runner.run(
-                    "git", "log", "--pretty=oneline", TagConvention.tagFor(prev.toString()) + "..HEAD");
+                    "git", "log", "--pretty=oneline", TagConvention.tagFor(prev.toString(), tagPrefix) + "..HEAD");
             int commitCount = new CommitCounter().countCommitDelta(gitOutput);
             String result = Version
                     .forIntegers(
@@ -49,8 +48,8 @@ class NextVersionPicker {
             explainVersion(log, result, "deducted version based on previous tag: '" + prev + "'");
             return result;
         } else {
-            String result = requestedVersion.newPatchVersion();
-            explainVersion(log, result, "found no tags matching version spec: '" + requestedVersion + "'");
+            String result = config.newPatchVersion();
+            explainVersion(log, result, "found no tags matching version spec: '" + config + "'");
             return result;
         }
     }

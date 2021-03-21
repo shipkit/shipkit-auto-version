@@ -6,7 +6,7 @@ import java.util.Collection;
 import java.util.Set;
 import java.util.TreeSet;
 
-import static org.shipkit.auto.version.RequestedVersion.isSupportedVersion;
+import static org.shipkit.auto.version.VersionConfig.isSupportedVersion;
 
 /**
  * Finds versions based on tags, finds tags by running Git command
@@ -20,17 +20,18 @@ class VersionsProvider {
 
     /**
      * Finds all versions based on Git tags.
-     * Supports only 'v1.0.0' tag naming convention at the moment.
+     *
+     * @param tagPrefix tag prefix
      */
-    Collection<Version> getAllVersions() {
+    Collection<Version> getAllVersions(String tagPrefix) {
         String gitOutput = runner.run("git", "tag");
         String[] tagOutput = gitOutput.split("\\R");
 
         Set<Version> result = new TreeSet<>();
         for (String line : tagOutput) {
             String tag = line.trim();
-            if (TagConvention.isVersionTag(tag) && isSupportedVersion(tag.substring(1))) {
-                String v = tag.substring(1);
+            if (TagConvention.isVersionTag(tag, tagPrefix) && isSupportedVersion(tag.substring(tagPrefix.length()))) {
+                String v = tag.substring(tagPrefix.length());
                 Version version = Version.valueOf(v);
                 result.add(version);
             }

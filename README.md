@@ -38,8 +38,8 @@ Check out [shipkit-changelog](https://github.com/shipkit/shipkit-changelog) plug
 ## Usage
 
 1. Apply `org.shipkit.shipkit-auto-version` to the root project.
-   Use the *highest* version available in the Gradle Plugin Portal:
-   [![Gradle Plugin Portal](https://img.shields.io/maven-metadata/v/https/plugins.gradle.org/m2/org/shipkit/shipkit-auto-version/maven-metadata.xml.svg?label=version:)](https://plugins.gradle.org/plugin/org.shipkit.shipkit-auto-version)
+   Use the *highest* version available in the Gradle Plugin Portal
+   [![Gradle Plugin Portal](https://img.shields.io/maven-metadata/v/https/plugins.gradle.org/m2/org/shipkit/shipkit-auto-version/maven-metadata.xml.svg?label=version)](https://plugins.gradle.org/plugin/org.shipkit.shipkit-auto-version)
 
 ```
 plugins {
@@ -48,10 +48,19 @@ plugins {
 ```
 
 2. Create `version.properties` file and drop it to your project root.
-The contents should contain the version spec:
+The contents should contain the version spec, and optionally, the tag prefix.
 
 ```
 version=1.0.*
+```
+
+You may optionally specify the tag prefix, our default is "v" for tags like "v1.2.3".
+To use "no prefix" convention (e.g. tags like "1.2.3") please use an empty value: `tagPrefix=`
+
+```
+version=1.0.*
+#tag prefix is optional, the default is "v", empty value means no prefix
+tagPrefix=release-
 ```
 
 3. For your CI, make sure that all tags are fetched (see the next section)
