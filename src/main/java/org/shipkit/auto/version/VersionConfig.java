@@ -14,17 +14,19 @@ class VersionConfig {
 
     private final String requestedVersion;
     private final String tagPrefix;
+    private final NextVersionStrategy nextVersionStrategy;
 
     /**
      * Creates configuration object.
      * Throws an exception if the supplied requestedVersion has invalid format.
-     *
-     * @param requestedVersion requested version specification, i.e. '1.0.*', '2.0.0'
+     *  @param requestedVersion requested version specification, i.e. '1.0.*', '2.0.0'
      * @param tagPrefix tag prefix, typically "v" or "release-" or an empty String
+     * @param nextVersionStrategy strategy to pick next version, 'commits' or 'sequential'
      */
-    VersionConfig(String requestedVersion, String tagPrefix) {
+    VersionConfig(String requestedVersion, String tagPrefix, NextVersionStrategy nextVersionStrategy) {
         this.requestedVersion = requestedVersion;
         this.tagPrefix = tagPrefix;
+        this.nextVersionStrategy = nextVersionStrategy;
         String test = isWildcard()?
                 newPatchVersion(): //this will create a version we can validate
                 requestedVersion;
@@ -69,7 +71,21 @@ class VersionConfig {
 
         String tagPrefix = (String) p.getOrDefault("tagPrefix", "v");
 
-        return new VersionConfig(v, tagPrefix);
+        NextVersionStrategy nextVersionStrategy = parse((String) p.get("strategy"), versionFile.getName());
+
+        return new VersionConfig(v, tagPrefix, nextVersionStrategy);
+    }
+
+    private static NextVersionStrategy parse(String strategy, String fileName) {
+        if (strategy == null) {
+            return NextVersionStrategy.COUNT_COMMITS;
+        }
+        return NextVersionStrategy
+                .parse(strategy)
+                .orElseThrow(() -> new ShipkitAutoVersionException(
+                        "File '" + fileName + "' has a misconfigured 'strategy' property\n" +
+                                "  Correct examples: 'strategy=commits' (default), 'strategy=sequential'"
+                ));
     }
 
     /**
@@ -96,4 +112,9 @@ class VersionConfig {
     public String getTagPrefix() {
         return tagPrefix;
     }
+
+    public NextVersionStrategy getNextVersionStrategy() {
+        return nextVersionStrategy;
+    }
+
 }
