@@ -46,7 +46,7 @@ class AutoVersion {
             Collection<Version> versions = new VersionsProvider(runner).getAllVersions(config.getTagPrefix());
             previousVersion = new PreviousVersionFinder().findPreviousVersion(versions, config);
             String nextVersion = new NextVersionPicker(runner, log).pickNextVersion(previousVersion,
-                    config, projectVersion, config.getTagPrefix());
+                    config, projectVersion);
             return new DeductedVersion(nextVersion, previousVersion, config.getTagPrefix());
         } catch (Exception e) {
             String message = "caught an exception, falling back to reasonable default";

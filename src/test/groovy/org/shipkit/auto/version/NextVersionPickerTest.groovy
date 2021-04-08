@@ -18,7 +18,7 @@ class NextVersionPickerTest extends Specification {
     def "picks version as configured on the Gradle project"() {
         when:
         def v = picker.pickNextVersion(
-                Optional.empty(), new VersionConfig("1.0.*", "v"), "1.1.0", "v")
+                Optional.empty(), new VersionConfig("1.0.*", "v"), "1.1.0")
 
         then:
         v == "1.1.0"
@@ -29,7 +29,7 @@ class NextVersionPickerTest extends Specification {
     def "picks version 'as is' because the wildcard is not used"() {
         when:
         def v = picker.pickNextVersion(
-                Optional.empty(), new VersionConfig("1.0.0", "v"), Project.DEFAULT_VERSION, "v")
+                Optional.empty(), new VersionConfig("1.0.0", "v"), Project.DEFAULT_VERSION)
 
         then:
         v == "1.0.0"
@@ -40,7 +40,7 @@ class NextVersionPickerTest extends Specification {
     def "picks new patch version when no previous version"() {
         when:
         def v = picker.pickNextVersion(
-                Optional.empty(), new VersionConfig("1.0.*", "v"), Project.DEFAULT_VERSION, "v")
+                Optional.empty(), new VersionConfig("1.0.*", "v"), Project.DEFAULT_VERSION)
 
         then:
         v == "1.0.0"
@@ -53,7 +53,7 @@ class NextVersionPickerTest extends Specification {
         def v = picker.pickNextVersion(
                 Optional.of(Version.valueOf("0.0.9")),
                 new VersionConfig("1.0.*", "v"),
-                Project.DEFAULT_VERSION, "v")
+                Project.DEFAULT_VERSION)
 
         then:
         v == "1.0.0"
@@ -71,7 +71,7 @@ some commit #2
         def v = picker.pickNextVersion(
                 Optional.of(Version.valueOf("1.0.0")),
                 new VersionConfig("1.0.*", "v"),
-                Project.DEFAULT_VERSION, "v")
+                Project.DEFAULT_VERSION)
 
         then:
         v == "1.0.2"
@@ -88,7 +88,7 @@ some commit
         def v = picker.pickNextVersion(
                 Optional.of(Version.valueOf("1.0.0")),
                 new VersionConfig("1.0.*", ""),
-                Project.DEFAULT_VERSION, "")
+                Project.DEFAULT_VERSION)
 
         then:
         v == "1.0.1"

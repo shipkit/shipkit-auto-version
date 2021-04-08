@@ -21,8 +21,7 @@ class NextVersionPicker {
     /**
      * Picks the next version to use based on the input parameters
      */
-    String pickNextVersion(Optional<Version> previousVersion, VersionConfig config, String projectVersion,
-                           String tagPrefix) {
+    String pickNextVersion(Optional<Version> previousVersion, VersionConfig config, String projectVersion) {
         if (!Project.DEFAULT_VERSION.equals(projectVersion)) {
             explainVersion(log, projectVersion, "uses version already specified in the Gradle project");
             return projectVersion;
@@ -37,7 +36,7 @@ class NextVersionPicker {
         if (previousVersion.isPresent() && previousVersion.get().satisfies(config.toString())) {
             Version prev = previousVersion.get();
             String gitOutput = runner.run(
-                    "git", "log", "--pretty=oneline", TagConvention.tagFor(prev.toString(), tagPrefix) + "..HEAD");
+                    "git", "log", "--pretty=oneline", TagConvention.tagFor(prev.toString(), config.getTagPrefix()) + "..HEAD");
             int commitCount = new CommitCounter().countCommitDelta(gitOutput);
             String result = Version
                     .forIntegers(
