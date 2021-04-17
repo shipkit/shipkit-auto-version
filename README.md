@@ -1,7 +1,11 @@
 [![CI](https://github.com/shipkit/shipkit-auto-version/workflows/CI/badge.svg)](https://github.com/shipkit/shipkit-auto-version/actions)
 [![Gradle Plugin Portal](https://img.shields.io/maven-metadata/v/https/plugins.gradle.org/m2/org/shipkit/shipkit-auto-version/maven-metadata.xml.svg?label=Version)](https://plugins.gradle.org/plugin/org.shipkit.shipkit-auto-version)
 
-# Shipkit
+<br>
+<a href="https://github.com/shipkit">
+<img src="https://github.com/shipkit/shipkit-resources/blob/main/images/Shipkit-logo.png" width="240"
+     alt="Shipkit Plugins"/>
+</a>
 
 ## Vision
 
