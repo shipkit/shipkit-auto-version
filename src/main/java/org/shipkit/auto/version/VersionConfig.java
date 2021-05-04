@@ -5,6 +5,7 @@ import com.github.zafarkhaja.semver.Version;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.Optional;
 import java.util.Properties;
 
 /**
@@ -25,16 +26,19 @@ class VersionConfig {
     VersionConfig(String requestedVersion, String tagPrefix) {
         this.requestedVersion = requestedVersion;
         this.tagPrefix = tagPrefix;
-        String test = isWildcard()?
-                newPatchVersion(): //this will create a version we can validate
-                requestedVersion;
 
-        try {
-            Version.valueOf(test); //validation
-        } catch (Exception e) {
-            throw new ShipkitAutoVersionException(
-                    "Invalid version specification: '" + requestedVersion + "'\n" +
-                    "  Correct examples: '1.0.*', '2.10.100'", e);
+        if (requestedVersion != null) {
+            String test = isWildcard() ?
+                    newPatchVersion() : //this will create a version we can validate
+                    requestedVersion;
+
+            try {
+                Version.valueOf(test); //validation
+            } catch (Exception e) {
+                throw new ShipkitAutoVersionException(
+                        "Invalid version specification: '" + requestedVersion + "'\n" +
+                                "  Correct examples: '1.0.*', '2.10.100'", e);
+            }
         }
     }
 
@@ -52,19 +56,25 @@ class VersionConfig {
      */
     static VersionConfig parseVersionFile(File versionFile) {
         Properties p = new Properties();
+
+        if (!versionFile.exists()) {
+            return new VersionConfig(null, "v");
+        }
+
         try {
             p.load(new FileReader(versionFile));
         } catch (IOException e) {
-            throw new ShipkitAutoVersionException(
-                    "Please create file 'version.properties' with a valid 'version' property, " +
-                            "for example 'version=1.0.*'", e);
+            System.out.println("[shipkit-auto-version] Ignoring file '" + versionFile.getName()
+                    + "' because it is not readable");
         }
 
-        String v = (String) p.get("version");
-        if (v == null || v.trim().isEmpty()) {
-            throw new ShipkitAutoVersionException(
-                    "File '" + versionFile.getName() + "' is missing the 'version' property\n" +
-                    "  Correct examples: 'version=1.0.*', 'version=2.10.100'");
+        String v;
+        if (p.containsKey("version") && p.get("version").toString().trim().equals("")) {
+            v = null;
+        } else if (!p.containsKey("version")) {
+            v = null;
+        } else {
+            v = (String) p.get("version");
         }
 
         String tagPrefix = (String) p.getOrDefault("tagPrefix", "v");
@@ -95,5 +105,12 @@ class VersionConfig {
 
     public String getTagPrefix() {
         return tagPrefix;
+    }
+
+    public Optional<String> getRequestedVersion() {
+        if (requestedVersion == null) {
+            return Optional.empty();
+        }
+        return Optional.of(requestedVersion);
     }
 }

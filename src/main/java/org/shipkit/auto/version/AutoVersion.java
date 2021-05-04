@@ -40,20 +40,39 @@ class AutoVersion {
 
     //Exposed for testing so that 'log' can be mocked
     DeductedVersion deductVersion(Logger log, String projectVersion) {
-        VersionConfig config = VersionConfig.parseVersionFile(versionFile);
         Optional<Version> previousVersion = Optional.empty();
+        VersionConfig config = VersionConfig.parseVersionFile(versionFile);
+
         try {
             Collection<Version> versions = new VersionsProvider(runner).getAllVersions(config.getTagPrefix());
-            previousVersion = new PreviousVersionFinder().findPreviousVersion(versions, config);
+            PreviousVersionFinder previousVersionFinder = new PreviousVersionFinder();
+
+            if (config.getRequestedVersion().isPresent()) {
+                previousVersion = previousVersionFinder.findPreviousVersion(versions, config);
+            }
+
             String nextVersion = new NextVersionPicker(runner, log).pickNextVersion(previousVersion,
                     config, projectVersion);
+
+            if (!config.getRequestedVersion().isPresent()) {
+                previousVersion = previousVersionFinder.findPreviousVersion(versions, new VersionConfig(nextVersion, config.getTagPrefix()));
+            }
+
+            logPreviousVersion(log, previousVersion);
+
             return new DeductedVersion(nextVersion, previousVersion, config.getTagPrefix());
         } catch (Exception e) {
             String message = "caught an exception, falling back to reasonable default";
             log.debug("shipkit-auto-version " + message, e);
-            String v = config.toString().replace("*", "unspecified");
+            String v = config.getRequestedVersion().get().replace("*", "unspecified");
             explainVersion(log, v, message + "\n  - run with --debug for more info");
             return new DeductedVersion(v, previousVersion, config.getTagPrefix());
         }
+    }
+
+    private void logPreviousVersion(Logger log, Optional<Version> previousVersion) {
+        log.info("[shipkit-auto-version] " + previousVersion
+                .map(version -> "Previous version: " + version)
+                .orElse("No previous version"));
     }
 }

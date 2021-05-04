@@ -14,25 +14,21 @@ class VersionConfigTest extends TmpFolderSpecification {
 
     def "no file"() {
         when:
-        parseVersionFile(new File("missing file"))
+        def configResult = parseVersionFile(new File("missing file"))
 
         then:
-        def e = thrown(ShipkitAutoVersionException)
-        e.message == "[shipkit-auto-version] Please create file 'version.properties' with a valid 'version' property, " +
-                "for example 'version=1.0.*'"
-        e.cause != null
+        !configResult.getRequestedVersion().isPresent()
+        configResult.getTagPrefix() == "v"
     }
 
     def "missing 'version' property"() {
-        def f = writeFile("noversion=missing")
-
         when:
-        parseVersionFile(f)
+        def f = writeFile("noversion=missing")
+        def configResult = parseVersionFile(f)
 
         then:
-        def e = thrown(ShipkitAutoVersionException)
-        e.message == "[shipkit-auto-version] File '" + f.name + "' is missing the 'version' property\n" +
-                "  Correct examples: 'version=1.0.*', 'version=2.10.100'"
+        !configResult.getRequestedVersion().isPresent()
+        configResult.getTagPrefix() == "v"
     }
 
     def "supports select types of versions"() {

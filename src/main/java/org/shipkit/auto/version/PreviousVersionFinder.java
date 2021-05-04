@@ -14,14 +14,14 @@ class PreviousVersionFinder {
      * Finds previous version based on the version specification
      */
     Optional<Version> findPreviousVersion(Collection<Version> versions, VersionConfig config) {
-        if (!config.isWildcard()) {
+        if (config.getRequestedVersion().isPresent() && !config.isWildcard()) {
             //Requested version is a concrete version like 1.0.0 (no wildcard).
             //We just find the previous version
-            return findPrevious(versions, Version.valueOf(config.toString()));
+            return findPrevious(versions, Version.valueOf(config.getRequestedVersion().get()));
         }
 
         Optional<Version> max = versions.stream()
-                .filter(v -> v.satisfies(config.toString()))
+                .filter(v -> v.satisfies(config.getRequestedVersion().get()))
                 .max(Version::compareTo);
 
         if (max.isPresent()) {
