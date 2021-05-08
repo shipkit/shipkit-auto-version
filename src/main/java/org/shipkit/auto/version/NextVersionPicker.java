@@ -5,6 +5,8 @@ import org.gradle.api.Project;
 import org.gradle.api.logging.Logger;
 
 import java.util.Optional;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Picks the next version to use.
@@ -27,13 +29,29 @@ class NextVersionPicker {
             return projectVersion;
         }
 
-        if (!config.isWildcard()) {
-            //if there is no wildcard we will use the version 'as is'
-            explainVersion(log, config.toString(), "uses verbatim version from version file");
-            return config.toString();
+        if (!config.getRequestedVersion().isPresent()) {
+            String tag = runner.run("git", "describe", "--tags");
+            Pattern pattern = Pattern.compile(config.getTagPrefix() + "\\d+\\.\\d+\\.\\d+");
+            Matcher matcher = pattern.matcher(tag);
+            String result;
+            if (matcher.find()) {
+                result = matcher.group().substring(config.getTagPrefix().length());
+                explainVersion(log, result, "deducted version based on tag: '" + config.getTagPrefix() + result + "'");
+            } else {
+                result = "0.0.1";
+                explainVersion(log, result, "found no version property and the code is not checked out on a valid tag");
+            }
+
+            return result;
         }
 
-        if (previousVersion.isPresent() && previousVersion.get().satisfies(config.toString())) {
+        if (!config.isWildcard()) {
+            //if there is no wildcard we will use the version 'as is'
+            explainVersion(log, config.getRequestedVersion().get(), "uses verbatim version from version file");
+            return config.getRequestedVersion().get();
+        }
+
+        if (previousVersion.isPresent() && previousVersion.get().satisfies(config.getRequestedVersion().get())) {
             Version prev = previousVersion.get();
             String gitOutput = runner.run(
                     "git", "log", "--pretty=oneline", TagConvention.tagFor(prev.toString(), config.getTagPrefix()) + "..HEAD");
