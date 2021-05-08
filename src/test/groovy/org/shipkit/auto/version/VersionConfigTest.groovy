@@ -21,9 +21,19 @@ class VersionConfigTest extends TmpFolderSpecification {
         configResult.getTagPrefix() == "v"
     }
 
-    def "missing 'version' property"() {
+    def "missing version property"() {
         when:
         def f = writeFile("noversion=missing")
+        def configResult = parseVersionFile(f)
+
+        then:
+        !configResult.getRequestedVersion().isPresent()
+        configResult.getTagPrefix() == "v"
+    }
+
+    def "version property empty"() {
+        when:
+        def f = writeFile("version=")
         def configResult = parseVersionFile(f)
 
         then:

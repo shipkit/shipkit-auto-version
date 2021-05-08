@@ -29,6 +29,20 @@ class AutoVersionTest extends TmpFolderSpecification {
         v.previousVersion == "1.0.1"
     }
 
+    def "happy path smoke test when no version property"() {
+        //others scenarios are covered in other test classes
+        versionFile << "version="
+        runner.run("git", "tag") >> "v1.0.4"
+        runner.run("git", "describe", "--tags") >> "v1.0.5"
+
+        when:
+        def v = autoVersion.deductVersion(log, Project.DEFAULT_VERSION)
+
+        then:
+        v.version == "1.0.5"
+        v.previousVersion == "1.0.4"
+    }
+
     def "no build failure when deducting versions fails"() {
         versionFile << "version=1.0.*"
         runner.run("git", "tag") >> "v1.0.1"

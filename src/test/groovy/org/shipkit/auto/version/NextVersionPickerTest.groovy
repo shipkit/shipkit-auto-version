@@ -117,4 +117,16 @@ some commit
         then:
         v == "1.1.0"
     }
+
+    def "picks version when no config file and not checked out on valid tag"() {
+        runner.run("git", "describe", "--tags") >> "v1.1.0"
+
+        when:
+        def v = picker.pickNextVersion(Optional.empty(),
+                new VersionConfig(null,"ver-"),
+                Project.DEFAULT_VERSION)
+
+        then:
+        v == "0.0.1"
+    }
 }
