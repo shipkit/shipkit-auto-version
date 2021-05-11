@@ -99,6 +99,10 @@ class VersionConfig {
         return version.matches("\\d+\\.\\d+\\.\\d+");
     }
 
+    static boolean isSnapshot(String tag, String tagPrefix) {
+        return tag.substring(tagPrefix.length()).matches("\\d+\\.\\d+\\.\\d+\\-\\d+\\-\\w+");
+    }
+
     public String toString() {
         return requestedVersion;
     }

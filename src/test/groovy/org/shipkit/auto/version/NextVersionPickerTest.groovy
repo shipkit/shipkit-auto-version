@@ -103,7 +103,7 @@ some commit
                 Project.DEFAULT_VERSION)
 
         then:
-        v == "1.1.0"
+        v == "1.1.1-SNAPSHOT"
     }
 
     def "picks version when no config file and checked out on tag"() {
@@ -118,12 +118,12 @@ some commit
         v == "1.1.0"
     }
 
-    def "picks version when no config file and not checked out on valid tag"() {
-        runner.run("git", "describe", "--tags") >> "v1.1.0"
+    def "picks version when no config file and checked out on not valid tag"() {
+        runner.run("git", "describe", "--tags") >> "ver-1.1.0"
 
         when:
         def v = picker.pickNextVersion(Optional.empty(),
-                new VersionConfig(null,"ver-"),
+                new VersionConfig(null,"v"),
                 Project.DEFAULT_VERSION)
 
         then:
