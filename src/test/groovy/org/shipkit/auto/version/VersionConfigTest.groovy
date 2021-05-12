@@ -51,7 +51,12 @@ class VersionConfigTest extends TmpFolderSpecification {
 
         'v1.0.0'    | 'v'        | true
         'v2.33.444' | 'v'        | true
+        '1.2.3'     | ''         | true
+        'ver-1.2.3' | 'ver-'     | true
 
+        '1.2.3'     | 'v'        | false
+        'v1.1.0'    | ''         | false
+        'ver-1.2.3' | 'v'        | false
         'x'         | ''         | false
         'v1.0'      | 'v'        | false
         'v1.0.0-rc' | 'v'        | false
@@ -67,6 +72,7 @@ class VersionConfigTest extends TmpFolderSpecification {
         'v1.0.0-1-sha123'       | 'v'        | true
         '2.33.444-12-fw6i89op'  | ''         | true
 
+        'v1.0.0-1-sha123'       | 'ver-'     | false
         'v1.0.0'                | 'v'        | false
         'v1.0-2-sha123'         | 'v'        | false
         'v1.0.0-rc'             | 'v'        | false
