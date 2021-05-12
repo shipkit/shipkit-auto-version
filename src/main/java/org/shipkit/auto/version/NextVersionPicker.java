@@ -8,7 +8,6 @@ import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static org.shipkit.auto.version.TagConvention.isVersionTag;
 import static org.shipkit.auto.version.VersionConfig.isSupportedVersion;
 import static org.shipkit.auto.version.VersionConfig.isSnapshot;
 
@@ -36,10 +35,10 @@ class NextVersionPicker {
         if (!config.getRequestedVersion().isPresent()) {
             String tag = runner.run("git", "describe", "--tags").trim();
             String result;
-            if (isVersionTag(tag, config.getTagPrefix()) && isSupportedVersion(tag.substring(config.getTagPrefix().length()))) {
+            if (isSupportedVersion(tag, config.getTagPrefix())) {
                 result = tag.substring(config.getTagPrefix().length());
                 explainVersion(log, result, "deducted version based on tag: '" + tag + "'");
-            } else if (isVersionTag(tag, config.getTagPrefix()) && isSnapshot(tag, config.getTagPrefix())){
+            } else if (isSnapshot(tag, config.getTagPrefix())){
                 Pattern pattern = Pattern.compile("\\d+\\.\\d+\\.\\d+");
                 Matcher matcher = pattern.matcher(tag);
                 matcher.find();

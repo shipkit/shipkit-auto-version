@@ -4,6 +4,7 @@ import spock.lang.Unroll
 
 import static VersionConfig.parseVersionFile
 import static VersionConfig.isSupportedVersion
+import static org.shipkit.auto.version.VersionConfig.isSnapshot
 
 class VersionConfigTest extends TmpFolderSpecification {
 
@@ -43,17 +44,32 @@ class VersionConfigTest extends TmpFolderSpecification {
 
     def "supports select types of versions"() {
         expect:
-        isSupportedVersion(spec) == result
+        isSupportedVersion(tag, tagPrefix) == result
 
         where:
-        spec        | result
+        tag         | tagPrefix  | result
 
-        '1.0.0'     | true
-        '2.33.444'  | true
+        'v1.0.0'    | 'v'        | true
+        'v2.33.444' | 'v'        | true
 
-        'x'         | false
-        '1.0'       | false
-        '1.0.0-rc'  | false
+        'x'         | ''         | false
+        'v1.0'      | 'v'        | false
+        'v1.0.0-rc' | 'v'        | false
+    }
+
+    def "tags are not annotated and snapshots can be deducted"() {
+        expect:
+        isSnapshot(tag, tagPrefix) == result
+
+        where:
+        tag                     | tagPrefix  | result
+
+        'v1.0.0-1-sha123'       | 'v'        | true
+        '2.33.444-12-fw6i89op'  | ''         | true
+
+        'v1.0.0'                | 'v'        | false
+        'v1.0-2-sha123'         | 'v'        | false
+        'v1.0.0-rc'             | 'v'        | false
     }
 
     @Unroll
