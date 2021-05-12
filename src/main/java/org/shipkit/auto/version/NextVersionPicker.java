@@ -8,6 +8,9 @@ import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static org.shipkit.auto.version.VersionConfig.isSupportedVersion;
+import static org.shipkit.auto.version.VersionConfig.isSnapshot;
+
 /**
  * Picks the next version to use.
  */
@@ -30,13 +33,18 @@ class NextVersionPicker {
         }
 
         if (!config.getRequestedVersion().isPresent()) {
-            String tag = runner.run("git", "describe", "--tags");
-            Pattern pattern = Pattern.compile(config.getTagPrefix() + "\\d+\\.\\d+\\.\\d+");
-            Matcher matcher = pattern.matcher(tag);
+            String tag = runner.run("git", "describe", "--tags").trim();
             String result;
-            if (matcher.find()) {
-                result = matcher.group().substring(config.getTagPrefix().length());
-                explainVersion(log, result, "deducted version based on tag: '" + config.getTagPrefix() + result + "'");
+            if (isSupportedVersion(tag, config.getTagPrefix())) {
+                result = tag.substring(config.getTagPrefix().length());
+                explainVersion(log, result, "deducted version based on tag: '" + tag + "'");
+            } else if (isSnapshot(tag, config.getTagPrefix())){
+                Pattern pattern = Pattern.compile("\\d+\\.\\d+\\.\\d+");
+                Matcher matcher = pattern.matcher(tag);
+                matcher.find();
+                result = Version.valueOf(matcher.group()).incrementPatchVersion("SNAPSHOT").toString();
+                explainVersion(log, result,
+                        "deducted snapshot based on tag: '" + config.getTagPrefix() + matcher.group() + "'");
             } else {
                 result = "0.0.1";
                 explainVersion(log, result, "found no version property and the code is not checked out on a valid tag");

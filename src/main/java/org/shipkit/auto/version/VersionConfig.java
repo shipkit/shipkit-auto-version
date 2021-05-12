@@ -90,13 +90,28 @@ class VersionConfig {
     }
 
     /**
-     * Informs if given version is supported by our system.
+     * Informs if given tag and version taken from this tag are supported by our system
      *
-     * @return true for simple versions like '1.0.0', '2.33.444',
+     * @return true for simple versions like '1.0.0', '2.33.444'
+     *          (provided the tag's prefix is equal to the 'tagPrefix' property),
      *          false for versions like '1.0.0-beta', '1.0', '1.foo'
+     *
      */
-    static boolean isSupportedVersion(String version) {
-        return version.matches("\\d+\\.\\d+\\.\\d+");
+    static boolean isSupportedVersion(String tag, String tagPrefix) {
+        return tag.startsWith(tagPrefix) && tag.substring(tagPrefix.length()).matches("\\d+\\.\\d+\\.\\d+");
+    }
+
+    /**
+     * Informs if given tag is supported and if snapshot can be deducted
+     * as the tag is not an annotated tag
+     *
+     * @return true for tags like 'v1.0.0-1-sha1234', '2.33.444-15-dgo4d29u'
+     *          (provided the tag's prefix is equal to the 'tagPrefix' property),
+     *          false for tags like 'v1.0.0-beta', '1.0', '1.foo'
+     */
+    static boolean isSnapshot(String tag, String tagPrefix) {
+        return tag.startsWith(tagPrefix)
+                && tag.substring(tagPrefix.length()).matches("\\d+\\.\\d+\\.\\d+\\-\\d+\\-\\w+");
     }
 
     public String toString() {

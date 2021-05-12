@@ -30,7 +30,7 @@ class VersionsProvider {
         Set<Version> result = new TreeSet<>();
         for (String line : tagOutput) {
             String tag = line.trim();
-            if (TagConvention.isVersionTag(tag, tagPrefix) && isSupportedVersion(tag.substring(tagPrefix.length()))) {
+            if (isSupportedVersion(tag, tagPrefix)) {
                 String v = tag.substring(tagPrefix.length());
                 Version version = Version.valueOf(v);
                 result.add(version);
