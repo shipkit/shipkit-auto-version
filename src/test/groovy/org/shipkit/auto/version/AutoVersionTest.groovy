@@ -58,4 +58,21 @@ class AutoVersionTest extends TmpFolderSpecification {
                 "  - reason: shipkit-auto-version caught an exception, falling back to reasonable default\n" +
                 "  - run with --debug for more info")
     }
+
+    def "no build failure when no version config present and deducting versions fails"() {
+        runner.run("git", "tag") >> {
+            throw new Exception()
+        }
+
+        when:
+        def v = autoVersion.deductVersion(log, Project.DEFAULT_VERSION)
+
+        then:
+        v.version == "0.0.1-SNAPSHOT"
+        v.previousVersion == null
+        1 * log.debug("shipkit-auto-version caught an exception, falling back to reasonable default", _ as Exception)
+        1 * log.lifecycle("Building version '0.0.1-SNAPSHOT'\n" +
+                "  - reason: shipkit-auto-version caught an exception, falling back to reasonable default\n" +
+                "  - run with --debug for more info")
+    }
 }

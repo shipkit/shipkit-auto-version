@@ -33,8 +33,17 @@ class NextVersionPicker {
         }
 
         if (!config.getRequestedVersion().isPresent()) {
-            String tag = runner.run("git", "describe", "--tags").trim();
+            String tag;
             String result;
+
+            try {
+                tag = runner.run("git", "describe", "--tags").trim();
+            } catch (Exception e) {
+                result = "0.0.1-SNAPSHOT";
+                explainVersion(log, result, "couldn't find tags in project");
+                return result;
+            }
+
             if (isSupportedVersion(tag, config.getTagPrefix())) {
                 result = tag.substring(config.getTagPrefix().length());
                 explainVersion(log, result, "deducted version based on tag: '" + tag + "'");

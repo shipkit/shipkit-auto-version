@@ -64,7 +64,7 @@ class AutoVersion {
         } catch (Exception e) {
             String message = "caught an exception, falling back to reasonable default";
             log.debug("shipkit-auto-version " + message, e);
-            String v = config.getRequestedVersion().get().replace("*", "unspecified");
+            String v = config.getRequestedVersion().orElse("0.0.1-SNAPSHOT").replace("*", "unspecified");
             explainVersion(log, v, message + "\n  - run with --debug for more info");
             return new DeductedVersion(v, previousVersion, config.getTagPrefix());
         }
