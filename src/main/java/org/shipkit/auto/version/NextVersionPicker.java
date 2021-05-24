@@ -40,7 +40,10 @@ class NextVersionPicker {
                 tag = runner.run("git", "describe", "--tags").trim();
             } catch (Exception e) {
                 result = "0.0.1-SNAPSHOT";
-                explainVersion(log, result, "couldn't find tags in project");
+                log.info("Process 'git describe --tags' exited with non-zero exit value. Assuming there are no tags. " +
+                        "Run with --debug for more.");
+                log.debug("Ignored exception from 'git describe --tags'. Assuming there are no tags.", e);
+                explainVersion(log, result, "couldn't run 'git describe --tags' (assuming there are no tags)");
                 return result;
             }
 
