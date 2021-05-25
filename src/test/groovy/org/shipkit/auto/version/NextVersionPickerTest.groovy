@@ -129,4 +129,19 @@ some commit
         then:
         v == "0.0.1"
     }
+
+    def "picks version when no tags found in project"() {
+        runner.run("git", "describe", "--tags") >> {
+            throw new ShipkitAutoVersionException("Problems executing command")
+        }
+
+        when:
+        def v = picker.pickNextVersion(Optional.empty(),
+                new VersionConfig(null,"v"),
+                Project.DEFAULT_VERSION)
+
+        then:
+        v == "0.0.1-SNAPSHOT"
+
+    }
 }
