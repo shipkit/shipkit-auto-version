@@ -58,7 +58,7 @@ class NextVersionPicker {
                 explainVersion(log, result,
                         "deducted snapshot based on tag: '" + config.getTagPrefix() + matcher.group() + "'");
             } else {
-                result = "0.0.1";
+                result = "0.0.1-SNAPSHOT";
                 explainVersion(log, result, "found no version property and the code is not checked out on a valid tag");
             }
 
