@@ -19,10 +19,8 @@ Encourage and help software developers set up their releases to be fully automat
 # shipkit-auto-version Gradle Plugin
 
 Our Gradle plugin ```shipkit-auto-version``` deducts the version for the Gradle project to streamline continuous delivery.
-You drop a ```version.properties``` file to your repo with content like `version=1.0.*`.
-The plugin will resolve the `*` part of the version based on the latest release tag and the number of commits.
-This way you can set up the project for continuous delivery and release every merged pull request with nicely incremented version.
-No more infamous "version bump" commits in every release!
+The plugin allows you to set up the project for CD and release either every merged pull request with nicely incremented version or whenever you like, 
+with code being checked out on corresponding git annotated tag. No more infamous "version bump" commits in every release!
 
 ```shipkit-auto-version``` plugin is **tiny** and has a single dependency on [jSemver](https://github.com/zafarkhaja/jsemver).
 It is a safe dependency because it is tiny, has no dependencies, and it is final (no code changes since 2015 - it wraps semver protocol that had [no changes since 2013](https://github.com/semver/semver/tree/v2.0.0)).
@@ -40,7 +38,7 @@ Check out [shipkit-changelog](https://github.com/shipkit/shipkit-changelog) plug
 - https://github.com/mockito/mockito-testng
 - https://github.com/mockito/mockito-kotlin
 
-## USAGE
+## Usage
 Shipkit Auto Version plugin supports two ways of releasing.
 The basic usage of the plugin, reinforces releasing with every pull request merged to master - it is fully automated and depends on version spec in `version.properties` file.
 The second one, that uses annotated tags to deduce version, is suitable for teams that prefer to cut release "on demand", rather than with every change on master.
