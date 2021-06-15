@@ -18,9 +18,10 @@ Encourage and help software developers set up their releases to be fully automat
 
 # shipkit-auto-version Gradle Plugin
 
-Our Gradle plugin ```shipkit-auto-version``` deducts the version for the Gradle project to streamline continuous delivery.
-The plugin allows you to set up the project for CD and release either every merged pull request with nicely incremented version or whenever you like, 
-with code being checked out on corresponding git annotated tag. No more infamous "version bump" commits in every release!
+Our Gradle plugin ```shipkit-auto-version``` deducts the version for the Gradle project to streamline automation and continuous delivery of your code.
+The idea is to infer the version from tags or from an optional `version.properties` file with a version spec like `1.0.*`.
+This way, you don't need to do any "version bump" commits in every release!
+This project is inspired on [Axion plugin](https://github.com/allegro/axion-release-plugin), and few others, listed later in this document.
 
 ```shipkit-auto-version``` plugin is **tiny** and has a single dependency on [jSemver](https://github.com/zafarkhaja/jsemver).
 It is a safe dependency because it is tiny, has no dependencies, and it is final (no code changes since 2015 - it wraps semver protocol that had [no changes since 2013](https://github.com/semver/semver/tree/v2.0.0)).
@@ -30,19 +31,31 @@ Check out [shipkit-changelog](https://github.com/shipkit/shipkit-changelog) plug
 
 ## Customers / sample projects
 
-- https://github.com/shipkit/shipkit-demo (great example/reference project)
-- https://github.com/shipkit/shipkit-changelog
-- https://github.com/shipkit/shipkit-auto-version (this project)
-- https://github.com/linkedin/ambry
+- https://github.com/mockito/mockito
 - https://github.com/mockito/mockito-scala
 - https://github.com/mockito/mockito-testng
 - https://github.com/mockito/mockito-kotlin
+- https://github.com/linkedin/ambry
+- https://github.com/shipkit/shipkit-demo (great example/reference project)
+- https://github.com/shipkit/shipkit-changelog
+- https://github.com/shipkit/shipkit-auto-version (this project)
+
+Do you want to add your project? Send us a PR!
 
 ## Usage
-Shipkit Auto Version plugin supports two ways of releasing.
-The basic usage of the plugin, reinforces releasing with every pull request merged to master - it is fully automated and depends on version spec in `version.properties` file.
-The second one, that uses annotated tags to deduce version, is suitable for teams that prefer to cut release "on demand", rather than with every change on master.
-Version is deduced from tag that code is checked out on. If the tag is valid (has same prefix as configured or default 'v' and version number is valid) deduced version is same as version in tag.
+
+Shipkit Auto Version plugin supports two release models.
+
+- Release **every change**: in order to release every change (or every pull request), use the `version.properties` file and specify the version spec, for example `version=1.0.*`.
+When building the project our plugin will set the version based on the current tags in the repo and the version spec in the version file.
+This approach is suitable for teams that release every change.
+- Release **every tag**: in order to release when a tag is pushed to the repo, delete the `version.properties` file or remove `version` property from its contents.
+When building the project our plugin sets the version based on the currently checked out tag.
+This approach is suitable for teams that prefer to cut release *on demand*, rather than with every change on master.
+
+*If you are unsure what release model is good for you, start releasing every change taking full advantage of continuous delivery.*
+
+Steps:
 
 1. Apply `org.shipkit.shipkit-auto-version` to the root project.
    Use the *highest* version available in the Gradle Plugin Portal
@@ -57,7 +70,7 @@ plugins {
 2. Configure and use the plugin in a preferred way.
    
    \
-   __Basic usage__
+   __If you release relese every change__
    
    Create `version.properties` file and drop it to your project root.
    The contents should contain the version spec, and optionally, the tag prefix.
@@ -75,12 +88,12 @@ plugins {
    tagPrefix=release-
    ```
 
-   __Usage based on annotated tags__
+   __If you release every tag__
 
    The `version.properties` file is optional. When using the plugin this way the version spec has to be empty
-   (`version=`, no version spec in the file or no file at all).
-   If a tag prefix other than 'v' is used it has to be specified in `version.properties` (same way as for "basic usage", eg. for "no prefix" please use `tagPrefix=`)
-
+   (`version=`, no `version` property, or no file at all).
+   By default, the plugin assumes 'v' prefix for tag naming conveniton.
+   To specify a different convention, use `tagPrefix` property in `version.properties` file.
 
 3. For your CI, make sure that all tags are fetched (see the next section)
 
@@ -122,7 +135,7 @@ tasks.named("generateChangelog") {
 }
 ```
 
-## Version Overriding
+## Version overriding
 
 It is sometimes useful to manually specify the version when building / publishing (e.g. to publish a `-SNAPSHOT`
 locally). This can be done by setting the gradle project version on the command line with the `-Pversion`
@@ -130,7 +143,7 @@ flag, e.g. `./gradlew publishToMavenLocal -Pversion=1.0.0-SNAPSHOT`.
 
 ## Implementation details
 
-### Basic usage with version specified in properties file
+### When releasing every change
 
 When the plugin is applied to the project it will:
 
@@ -174,17 +187,18 @@ When the plugin is applied to the project it will:
 - in case d),e) use '0' as patch version
 - in case g) the user manually specified the version on the command line
 
-### Usage based on annotated tag
+### When releasing every tag
 
-Version is not specified in `version.properties`, the file is optional
-(when other tag prefix than default 'v' is used for tags in a project it has to be specified with `tagPrefix`).
-When version spec is not configured the plugin checks if code is checked out on annotated tag (with `git describe --tags`) and if tag's prefix is the same as this specified in `version.properties` the plugin picks the same version as version number in tag
-(e.g. no `version.properties` file in project and code is checked out on "v1.5.2" - the plugin picks version number "1.5.2"; more possible cases in table below).
+Version is not specified in `version.properties` and the file is optional when using default tag prefix "v".
+For custom tag naming conventions you still need `tagPrefix` property in the version file.
+The plugin runs `git describe --tags` to identify the tag you checked out.
+For example, let's say the project uses default tag naming convention prefix "v".
+If the code is checked out at "v1.5.2" the plugin sets version "1.5.2" on the Gradle project.
 
-When the code is not checked out on annotated tag but ahead of it, the plugin will pick last matching tag version number
-with patch version number increased by 1 and with added "-SNAPSHOT" suffix (e.g. "git describe --tags" result is "v1.5.2-4-sha123" -> plugin deduces "1.5.3-SNAPSHOT").
+When the code is checked ahead of the tag, the plugin will pick last matching tag version number, increment the patch version and add "-SNAPSHOT" suffix.
+For example, when `git describe --tags` yields `v1.5.2-4-sha123` the plugin uses "1.5.3-SNAPSHOT" version.
 
-When tag's prefix doesn't match `tagPrefix` the plugin picks fallback version number which is "0.0.1-SNAPSHOT".
+When tag does not match the convention (`tagPrefix`) the plugin picks fallback version number which is "0.0.1-SNAPSHOT".
 
 #### Examples:
 
