@@ -158,14 +158,14 @@ When the plugin is applied to the project it will:
    - identifies the latest (newest) version matching version spec
    - compares the version with the version spec:
 
-| case | spec  | latest tag | -Pversion       | # of commits    | result          | description                          |
+| case | spec  | latest tag | -Pversion=      | # of commits    | result          | description                          |
 |------|-------|------------|-----------------|-----------------|-----------------|--------------------------------------|
 | a    | 1.0.* | v1.0.5     |                 | 0               | 1.0.5           | zero new commits                     |
 | b    | 1.0.* | v1.0.5     |                 | 2               | 1.0.7           | two new commits                      |
 | c    | 1.0.* | v1.0.5     |                 | 5 (2 merge + 1) | 1.0.8           | two merge commits and new one on top |
 | d    | 1.1.* | v1.0.5     |                 | 5               | 1.1.0           | first x.y.0 version                  |
 | e    | 2.0.* | v1.0.5     |                 | 5               | 2.0.0           | first z.0.0 version                  |
-| f    | 1.*.5 |            |                 |                 | error           | unsupported format                   |
+| f    | 1.\*.5|            |                 |                 | error           | unsupported format                   |
 | g    | 1.0.* | v1.0.5     | 1.0.10-SNAPSHOT | [any]           | 1.0.10-SNAPSHOT | version overridden from CLI argument |
 
 - in case a),b) we are resolving the wildcard based on # of commits on top of the tag
@@ -202,14 +202,13 @@ When tag does not match the convention (`tagPrefix`) the plugin picks fallback v
 
 #### Examples:
 
-| case | spec (version, tagPrefix) | checked out on  | -Pversion       | result
+| case | version.properties        | checked out on  | -Pversion=      | result
 |------|---------------------------|-----------------|-----------------|------------------------------------------------------
-| h    | none, none                | v1.0.5          |                 | 1.0.5 (no 'tagPrefix' specified, default is 'v')
-| i    | version= , none           | v1.0.5          |                 | 1.0.5 (no 'tagPrefix' specified, default is 'v')
-| j    | none, tagPrefix=ver-      | ver-1.0.5       |                 | 1.0.5 ('tagPrefix' matches the tag)
-| k    | none, none                | v1.0.5-2-sha123 |                 | 1.0.6-SNAPSHOT (ahead of "v1.0.5" tag)
-| l    | none, tagPrefix=          | v1.0.5          |                 | 0.0.1-SNAPSHOT (empty tag prefix doesn't match 'v')
-| m    | none, none                | v1.0.2          | 1.0.5-SNAPSHOT  | 1.0.5-SNAPSHOT (version overridden from CLI argument)
+| h    | (empty/missing)           | v1.0.5          |                 | 1.0.5 (no 'tagPrefix' specified, default is 'v')
+| i    | tagPrefix=ver-            | ver-1.0.5       |                 | 1.0.5 ('tagPrefix' matches the tag)
+| j    | (empty/missing)           | v1.0.5-2-sha123 |                 | 1.0.6-SNAPSHOT (ahead of "v1.0.5" tag)
+| k    | tagPrefix=                | v1.0.5          |                 | 0.0.1-SNAPSHOT (empty tag prefix doesn't match 'v')
+| l    | (empty/missing)           | v1.0.2          | 1.0.5-SNAPSHOT  | 1.0.5-SNAPSHOT (version overridden from CLI argument)
 
 ## Similar plugins
 
