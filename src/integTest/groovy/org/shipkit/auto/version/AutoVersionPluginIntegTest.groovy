@@ -30,6 +30,14 @@ class AutoVersionPluginIntegTest extends Specification {
         run("tasks")
     }
 
+    def "uses four-number version scheme"() {
+        file("version.properties") << "version=1.0.0.1"
+        file("build.gradle") << "assert project.version == '1.0.0.1'"
+
+        expect:
+        run("tasks")
+    }
+
     File file(String path) {
         def f = new File(rootDir, path)
         if (!f.exists()) {

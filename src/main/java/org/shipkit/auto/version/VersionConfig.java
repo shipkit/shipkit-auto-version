@@ -1,49 +1,49 @@
 package org.shipkit.auto.version;
 
-import com.github.zafarkhaja.semver.Version;
 
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.Optional;
 import java.util.Properties;
+import java.util.regex.Pattern;
 
 /**
  * Version configuration representing the version file.
  */
 class VersionConfig {
 
-    private final String requestedVersion;
+    private final String versionSpec;
     private final String tagPrefix;
 
     /**
      * Creates configuration object.
-     * Throws an exception if the supplied requestedVersion has invalid format.
+     * Throws an exception if the supplied versionSpec has invalid format.
      *
-     * @param requestedVersion requested version specification, i.e. '1.0.*', '2.0.0'
+     * @param versionSpec requested version specification, i.e. '1.0.*', '2.0.0'
      * @param tagPrefix tag prefix, typically "v" or "release-" or an empty String
      */
-    VersionConfig(String requestedVersion, String tagPrefix) {
-        this.requestedVersion = requestedVersion;
+    VersionConfig(String versionSpec, String tagPrefix) {
+        this.versionSpec = versionSpec;
         this.tagPrefix = tagPrefix;
 
-        if (requestedVersion != null) {
+        if (versionSpec != null) {
             String test = isWildcard() ?
                     newPatchVersion() : //this will create a version we can validate
-                    requestedVersion;
+                    versionSpec;
 
             try {
-                Version.valueOf(test); //validation
+                new VersionNumber(test);
             } catch (Exception e) {
                 throw new ShipkitAutoVersionException(
-                        "Invalid version specification: '" + requestedVersion + "'\n" +
-                                "  Correct examples: '1.0.*', '2.10.100'", e);
+                        "Invalid version specification: '" + versionSpec + "'\n" +
+                                "  Correct examples: '1.0.*', '1.0.0.*', '2.10.100', '1.2.3.4", e);
             }
         }
     }
 
     String newPatchVersion() {
-        return requestedVersion.replace('*', '0');
+        return versionSpec.replace('*', '0');
     }
 
     /**
@@ -86,7 +86,7 @@ class VersionConfig {
      * Returns true when the version spec is valid and uses '*' wildcard.
      */
     boolean isWildcard() {
-        return requestedVersion.matches("\\d+\\.\\d+\\.\\*");
+        return versionSpec.matches("^\\d+\\.\\d+\\.(\\d+\\.)?\\*$");
     }
 
     /**
@@ -98,7 +98,20 @@ class VersionConfig {
      *
      */
     static boolean isSupportedVersion(String tag, String tagPrefix) {
-        return tag.startsWith(tagPrefix) && tag.substring(tagPrefix.length()).matches("\\d+\\.\\d+\\.\\d+");
+        return tag.startsWith(tagPrefix) && isSupportedVersion(tag.substring(tagPrefix.length()));
+    }
+
+    /**
+     * Informs if provided version is supported (e.g. 1.2.3 or 1.2.3.4).
+     * It's a simple check, not really supporting any interesting semver variants.
+     * It supports 1.2.3.4 variant that is _not_ semver compatible.
+     *
+     * @see #isSupportedVersion(String, String)
+     * @param version version to test
+     * @return true if version is supported
+     */
+    static boolean isSupportedVersion(String version) {
+        return version.matches("^\\d+\\.\\d+\\.\\d+(\\.\\d+)?$");
     }
 
     /**
@@ -111,21 +124,21 @@ class VersionConfig {
      */
     static boolean isSnapshot(String tag, String tagPrefix) {
         return tag.startsWith(tagPrefix)
-                && tag.substring(tagPrefix.length()).matches("\\d+\\.\\d+\\.\\d+\\-\\d+\\-\\w+");
+                && tag.substring(tagPrefix.length()).matches("\\d+\\.\\d+\\.\\d+(\\.\\d+)?-\\d+-\\w+");
     }
 
     public String toString() {
-        return requestedVersion;
+        return versionSpec;
     }
 
     public String getTagPrefix() {
         return tagPrefix;
     }
 
-    public Optional<String> getRequestedVersion() {
-        if (requestedVersion == null) {
+    public Optional<String> getVersionSpec() {
+        if (versionSpec == null) {
             return Optional.empty();
         }
-        return Optional.of(requestedVersion);
+        return Optional.of(versionSpec);
     }
 }

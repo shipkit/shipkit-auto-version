@@ -51,7 +51,7 @@ class NextVersionPickerTest extends Specification {
     def "picks new patch version when no matching previous versions"() {
         when:
         def v = picker.pickNextVersion(
-                Optional.of(Version.valueOf("0.0.9")),
+                Optional.of(new VersionNumber("0.0.9")),
                 new VersionConfig("1.0.*", "v"),
                 Project.DEFAULT_VERSION)
 
@@ -69,7 +69,7 @@ some commit #2
 
         when:
         def v = picker.pickNextVersion(
-                Optional.of(Version.valueOf("1.0.0")),
+                Optional.of(new VersionNumber("1.0.0")),
                 new VersionConfig("1.0.*", "v"),
                 Project.DEFAULT_VERSION)
 
@@ -86,7 +86,7 @@ some commit
 
         when:
         def v = picker.pickNextVersion(
-                Optional.of(Version.valueOf("1.0.0")),
+                Optional.of(new VersionNumber("1.0.0")),
                 new VersionConfig("1.0.*", ""),
                 Project.DEFAULT_VERSION)
 
@@ -104,6 +104,18 @@ some commit
 
         then:
         v == "1.1.1-SNAPSHOT"
+    }
+
+    def "picks 4-part version when no config file and not checked out on tag"() {
+        runner.run("git", "describe", "--tags") >> "v1.2.3.4-1-sha12345"
+
+        when:
+        def v = picker.pickNextVersion(Optional.empty(),
+                new VersionConfig(null,"v"),
+                Project.DEFAULT_VERSION)
+
+        then:
+        v == "1.2.3.5-SNAPSHOT"
     }
 
     def "picks version when no config file and checked out on tag"() {

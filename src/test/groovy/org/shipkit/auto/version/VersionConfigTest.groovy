@@ -18,7 +18,7 @@ class VersionConfigTest extends TmpFolderSpecification {
         def configResult = parseVersionFile(new File("missing file"))
 
         then:
-        !configResult.getRequestedVersion().isPresent()
+        !configResult.getVersionSpec().isPresent()
         configResult.getTagPrefix() == "v"
     }
 
@@ -28,7 +28,7 @@ class VersionConfigTest extends TmpFolderSpecification {
         def configResult = parseVersionFile(f)
 
         then:
-        !configResult.getRequestedVersion().isPresent()
+        !configResult.getVersionSpec().isPresent()
         configResult.getTagPrefix() == "v"
     }
 
@@ -38,8 +38,20 @@ class VersionConfigTest extends TmpFolderSpecification {
         def configResult = parseVersionFile(f)
 
         then:
-        !configResult.getRequestedVersion().isPresent()
+        !configResult.getVersionSpec().isPresent()
         configResult.getTagPrefix() == "v"
+    }
+
+    def "knows if has wildcard"() {
+        expect:
+        new VersionConfig(versionSpec, "").isWildcard() == isWildcard
+
+        where:
+        versionSpec     | isWildcard
+        "1.2.3"         | false
+        "1.22.3.44"     | false
+        "1.22.3.*"      | true
+        "1.22.*"        | true
     }
 
     def "supports select types of versions"() {
@@ -53,8 +65,10 @@ class VersionConfigTest extends TmpFolderSpecification {
         'v2.33.444' | 'v'        | true
         '1.2.3'     | ''         | true
         'ver-1.2.3' | 'ver-'     | true
+        'v1.2.3.44' | 'v'        | true
 
         '1.2.3'     | 'v'        | false
+        'v1.2.3.4.5'| 'v'        | false
         'v1.1.0'    | ''         | false
         'ver-1.2.3' | 'v'        | false
         'x'         | ''         | false
@@ -71,6 +85,7 @@ class VersionConfigTest extends TmpFolderSpecification {
 
         'v1.0.0-1-sha123'       | 'v'        | true
         '2.33.444-12-fw6i89op'  | ''         | true
+        '1.2.3.4-12-fw6i89op'   | ''         | true
 
         'v1.0.0-1-sha123'       | 'ver-'     | false
         'v1.0.0'                | 'v'        | false
@@ -85,8 +100,8 @@ class VersionConfigTest extends TmpFolderSpecification {
 
         then:
         def e = thrown(ShipkitAutoVersionException)
-        e.message == "[shipkit-auto-version] Invalid version specification: '$spec'\n" +
-                "  Correct examples: '1.0.*', '2.10.100'"
+        e.message.startsWith "[shipkit-auto-version] Invalid version specification: '$spec'\n"
+        e.message.contains "Correct examples: '1.0.*'"
         e.cause != null
 
         where:

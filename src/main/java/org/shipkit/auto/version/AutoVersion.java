@@ -1,6 +1,5 @@
 package org.shipkit.auto.version;
 
-import com.github.zafarkhaja.semver.Version;
 import org.gradle.api.logging.Logger;
 import org.gradle.api.logging.Logging;
 
@@ -40,21 +39,21 @@ class AutoVersion {
 
     //Exposed for testing so that 'log' can be mocked
     DeductedVersion deductVersion(Logger log, String projectVersion) {
-        Optional<Version> previousVersion = Optional.empty();
+        Optional<VersionNumber> previousVersion = Optional.empty();
         VersionConfig config = VersionConfig.parseVersionFile(versionFile);
 
         try {
-            Collection<Version> versions = new VersionsProvider(runner).getAllVersions(config.getTagPrefix());
+            Collection<VersionNumber> versions = new VersionsProvider(runner).getAllVersions(config.getTagPrefix());
             PreviousVersionFinder previousVersionFinder = new PreviousVersionFinder();
 
-            if (config.getRequestedVersion().isPresent()) {
+            if (config.getVersionSpec().isPresent()) {
                 previousVersion = previousVersionFinder.findPreviousVersion(versions, config);
             }
 
             String nextVersion = new NextVersionPicker(runner, log).pickNextVersion(previousVersion,
                     config, projectVersion);
 
-            if (!config.getRequestedVersion().isPresent()) {
+            if (!config.getVersionSpec().isPresent()) {
                 previousVersion = previousVersionFinder.findPreviousVersion(versions, new VersionConfig(nextVersion, config.getTagPrefix()));
             }
 
@@ -64,13 +63,13 @@ class AutoVersion {
         } catch (Exception e) {
             String message = "caught an exception, falling back to reasonable default";
             log.debug("shipkit-auto-version " + message, e);
-            String v = config.getRequestedVersion().orElse("0.0.1-SNAPSHOT").replace("*", "unspecified");
+            String v = config.getVersionSpec().orElse("0.0.1-SNAPSHOT").replace("*", "unspecified");
             explainVersion(log, v, message + "\n  - run with --debug for more info");
             return new DeductedVersion(v, previousVersion, config.getTagPrefix());
         }
     }
 
-    private void logPreviousVersion(Logger log, Optional<Version> previousVersion) {
+    private void logPreviousVersion(Logger log, Optional<VersionNumber> previousVersion) {
         log.info("[shipkit-auto-version] " + previousVersion
                 .map(version -> "Previous version: " + version)
                 .orElse("No previous version"));

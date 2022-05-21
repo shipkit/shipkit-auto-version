@@ -1,7 +1,5 @@
 package org.shipkit.auto.version;
 
-import com.github.zafarkhaja.semver.Version;
-
 import javax.annotation.Nullable;
 import java.util.Objects;
 import java.util.Optional;
@@ -14,13 +12,11 @@ class DeductedVersion {
     private final String version;
     private final String previousVersion;
     private final String previousTag;
-    private final String tagPrefix;
 
-    DeductedVersion(String version, Optional<Version> previousVersion, String tagPrefix) {
-        this.tagPrefix = tagPrefix;
+    DeductedVersion(String version, Optional<VersionNumber> previousVersion, String tagPrefix) {
         Objects.requireNonNull(version, "version cannot be null");
         this.version = version;
-        this.previousVersion = previousVersion.map(Version::toString).orElse(null);
+        this.previousVersion = previousVersion.map(VersionNumber::toString).orElse(null);
         this.previousTag = previousVersion.map(v -> TagConvention.tagFor(v.toString(), tagPrefix)).orElse(null);
     }
 

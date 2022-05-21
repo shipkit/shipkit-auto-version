@@ -1,6 +1,5 @@
 package org.shipkit.auto.version;
 
-import com.github.zafarkhaja.semver.Version;
 import org.gradle.api.Project;
 import org.gradle.api.logging.Logger;
 
@@ -26,13 +25,13 @@ class NextVersionPicker {
     /**
      * Picks the next version to use based on the input parameters
      */
-    String pickNextVersion(Optional<Version> previousVersion, VersionConfig config, String projectVersion) {
+    String pickNextVersion(Optional<VersionNumber> previousVersion, VersionConfig config, String projectVersion) {
         if (!Project.DEFAULT_VERSION.equals(projectVersion)) {
             explainVersion(log, projectVersion, "uses version already specified in the Gradle project");
             return projectVersion;
         }
 
-        if (!config.getRequestedVersion().isPresent()) {
+        if (!config.getVersionSpec().isPresent()) {
             String tag;
             String result;
 
@@ -50,11 +49,11 @@ class NextVersionPicker {
             if (isSupportedVersion(tag, config.getTagPrefix())) {
                 result = tag.substring(config.getTagPrefix().length());
                 explainVersion(log, result, "deducted version based on tag: '" + tag + "'");
-            } else if (isSnapshot(tag, config.getTagPrefix())){
-                Pattern pattern = Pattern.compile("\\d+\\.\\d+\\.\\d+");
+            } else if (isSnapshot(tag, config.getTagPrefix())) {
+                Pattern pattern = Pattern.compile("\\d+\\.\\d+\\.\\d+(\\.\\d+)?");
                 Matcher matcher = pattern.matcher(tag);
                 matcher.find();
-                result = Version.valueOf(matcher.group()).incrementPatchVersion("SNAPSHOT").toString();
+                result = new VersionNumber(matcher.group()).incrementBy(1).toString() + "-SNAPSHOT";
                 explainVersion(log, result,
                         "deducted snapshot based on tag: '" + config.getTagPrefix() + matcher.group() + "'");
             } else {
@@ -67,21 +66,16 @@ class NextVersionPicker {
 
         if (!config.isWildcard()) {
             //if there is no wildcard we will use the version 'as is'
-            explainVersion(log, config.getRequestedVersion().get(), "uses verbatim version from version file");
-            return config.getRequestedVersion().get();
+            explainVersion(log, config.getVersionSpec().get(), "uses verbatim version from version file");
+            return config.getVersionSpec().get();
         }
 
-        if (previousVersion.isPresent() && previousVersion.get().satisfies(config.getRequestedVersion().get())) {
-            Version prev = previousVersion.get();
+        if (previousVersion.isPresent() && previousVersion.get().satisfies(config.getVersionSpec().get())) {
+            VersionNumber prev = previousVersion.get();
             String gitOutput = runner.run(
                     "git", "log", "--pretty=oneline", TagConvention.tagFor(prev.toString(), config.getTagPrefix()) + "..HEAD");
             int commitCount = new CommitCounter().countCommitDelta(gitOutput);
-            String result = Version
-                    .forIntegers(
-                            prev.getMajorVersion(),
-                            prev.getMinorVersion(),
-                            prev.getPatchVersion() + commitCount)
-                    .toString();
+            String result = prev.incrementBy(commitCount).toString();
             explainVersion(log, result, "deducted version based on previous tag: '" + prev + "'");
             return result;
         } else {
@@ -95,7 +89,7 @@ class NextVersionPicker {
      * Explain version in a consistent, human-readable way
      */
     static void explainVersion(Logger log, String version, String reason) {
-        log.lifecycle("Building version '"+ version + "'\n" +
+        log.lifecycle("Building version '" + version + "'\n" +
                 "  - reason: shipkit-auto-version " + reason);
     }
 }
