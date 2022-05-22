@@ -49,11 +49,13 @@ class VersionNumber implements Comparable<VersionNumber> {
      * @param versionSpec - for example, 1.2.* or 1.2.3.*
      */
     public boolean satisfies(String versionSpec) {
-        if (fourthDigit == -1) {
+        if (fourthDigit == -1 && versionSpec.matches("^\\d+\\.\\d+\\.\\*$")) {
             return semver.satisfies(versionSpec);
+        } else if (fourthDigit != -1 && versionSpec.matches("^\\d+\\.\\d+\\.\\d+\\.\\*$")) {
+            String version = versionSpec.replaceAll("\\.\\*$", "");
+            return semver.satisfies(version);
         }
-        String version = versionSpec.replaceAll("\\.\\*$", "");
-        return semver.satisfies(version);
+        return false;
     }
 
     public VersionNumber incrementBy(int count) {

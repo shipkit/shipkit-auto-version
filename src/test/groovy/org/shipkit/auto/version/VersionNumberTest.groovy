@@ -68,4 +68,19 @@ class VersionNumberTest extends Specification {
         "1.2.3"     |"1.2.3"
         "1.2.3.4"   |"1.2.3.4"
     }
+
+    def "satisfies spec"() {
+        expect:
+        new VersionNumber(version).satisfies(spec) == result
+
+        where:
+        version     | spec       | result
+        '1.0.0'     | '1.0.0'    | false
+        '1.0.0'     | '1.0.*'    | true
+        '1.0.4'     | '1.0.*'    | true
+        '1.0.0.0'   | '1.0.0.*'  | true
+        '1.0.0.5'   | '1.0.0.*'  | true
+        '1.0.0'     | '1.0.0.*'  | false
+        '1.0.0.0'   | '1.0.*'    | false
+    }
 }
