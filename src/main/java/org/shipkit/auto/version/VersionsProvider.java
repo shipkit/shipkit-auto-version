@@ -1,7 +1,5 @@
 package org.shipkit.auto.version;
 
-import com.github.zafarkhaja.semver.Version;
-
 import java.util.Collection;
 import java.util.Set;
 import java.util.TreeSet;
@@ -23,17 +21,16 @@ class VersionsProvider {
      *
      * @param tagPrefix tag prefix
      */
-    Collection<Version> getAllVersions(String tagPrefix) {
+    Collection<VersionNumber> getAllVersions(String tagPrefix) {
         String gitOutput = runner.run("git", "tag");
         String[] tagOutput = gitOutput.split("\\R");
 
-        Set<Version> result = new TreeSet<>();
+        Set<VersionNumber> result = new TreeSet<>();
         for (String line : tagOutput) {
             String tag = line.trim();
             if (isSupportedVersion(tag, tagPrefix)) {
                 String v = tag.substring(tagPrefix.length());
-                Version version = Version.valueOf(v);
-                result.add(version);
+                result.add(new VersionNumber(v));
             }
         }
 

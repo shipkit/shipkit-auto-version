@@ -25,16 +25,16 @@ class VersionsProviderTest extends Specification {
             v1.0.2
             v2.0.0
             v22.333.4444
+            v1.0.0.0
             
             foo
             1.0.0
-            v1.0
-            v1.0.0.0
+            v1.0            
             v1.0.0-beta
         """
 
         expect:
-        provider.getAllVersions("v").toString() == "[1.0.1, 1.0.2, 2.0.0, 22.333.4444]"
+        provider.getAllVersions("v").toString() == "[1.0.0.0, 1.0.1, 1.0.2, 2.0.0, 22.333.4444]"
     }
 
     def "gets all versions when no tag prefix"() {

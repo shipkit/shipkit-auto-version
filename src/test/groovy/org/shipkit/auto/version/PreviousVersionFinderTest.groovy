@@ -3,8 +3,6 @@ package org.shipkit.auto.version
 
 import spock.lang.Specification
 
-import static com.github.zafarkhaja.semver.Version.valueOf
-
 class PreviousVersionFinderTest extends Specification {
 
     def "finds previous of concrete version"() {
@@ -24,7 +22,7 @@ class PreviousVersionFinderTest extends Specification {
 
     String prev(Collection<String> versions, String target) {
         new PreviousVersionFinder().findPreviousVersion(
-                versions.collect { valueOf(it) },
+                versions.collect { new VersionNumber(it) },
                 new VersionConfig(target, "v")).orElse(null)
     }
 }

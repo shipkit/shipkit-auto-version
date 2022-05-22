@@ -24,7 +24,7 @@ This way, you don't need to do any "version bump" commits in every release!
 This project is inspired on [Axion plugin](https://github.com/allegro/axion-release-plugin), and few others, listed later in this document.
 
 ```shipkit-auto-version``` plugin is **tiny** and has a single dependency on [jSemver](https://github.com/zafarkhaja/jsemver).
-It is a safe dependency because it is tiny, has no dependencies, and it is final (no code changes since 2015 - it wraps semver protocol that had [no changes since 2013](https://github.com/semver/semver/tree/v2.0.0)).
+It is a safe dependency because it is tiny, has no dependencies, and it is final (no code changes since 2015 - it wraps semver protocol that as of 2022 had [no changes since 2013](https://github.com/semver/semver/tree/v2.0.0)).
 
 Do you want to automate changelog generation?
 Check out [shipkit-changelog](https://github.com/shipkit/shipkit-changelog) plugin that neatly integrate with ```shipkit-auto-version``` plugin.
@@ -158,15 +158,16 @@ When the plugin is applied to the project it will:
    - identifies the latest (newest) version matching version spec
    - compares the version with the version spec:
 
-| case | spec  | latest tag | -Pversion=      | # of commits    | result          | description                          |
-|------|-------|------------|-----------------|-----------------|-----------------|--------------------------------------|
-| a    | 1.0.* | v1.0.5     |                 | 0               | 1.0.5           | zero new commits                     |
-| b    | 1.0.* | v1.0.5     |                 | 2               | 1.0.7           | two new commits                      |
-| c    | 1.0.* | v1.0.5     |                 | 5 (2 merge + 1) | 1.0.8           | two merge commits and new one on top |
-| d    | 1.1.* | v1.0.5     |                 | 5               | 1.1.0           | first x.y.0 version                  |
-| e    | 2.0.* | v1.0.5     |                 | 5               | 2.0.0           | first z.0.0 version                  |
-| f    | 1.\*.5|            |                 |                 | error           | unsupported format                   |
-| g    | 1.0.* | v1.0.5     | 1.0.10-SNAPSHOT | [any]           | 1.0.10-SNAPSHOT | version overridden from CLI argument |
+| case | spec    | latest tag | -Pversion=      | # of commits    | result          | description                             |
+|------|---------|------------|-----------------|-----------------|-----------------|-----------------------------------------|
+| a    | 1.0.*   | v1.0.5     |                 | 0               | 1.0.5           | zero new commits                        |
+| b    | 1.0.*   | v1.0.5     |                 | 2               | 1.0.7           | two new commits                         |
+| c    | 1.0.*   | v1.0.5     |                 | 5 (2 merge + 1) | 1.0.8           | two merge commits and new one on top    |
+| d    | 1.1.*   | v1.0.5     |                 | 5               | 1.1.0           | first x.y.0 version                     |
+| e    | 2.0.*   | v1.0.5     |                 | 5               | 2.0.0           | first z.0.0 version                     |
+| f    | 1.\*.5  |            |                 |                 | error           | unsupported format                      |
+| g    | 1.0.*   | v1.0.5     | 1.0.10-SNAPSHOT | [any]           | 1.0.10-SNAPSHOT | version overridden from CLI argument    |
+| e    | 1.0.0.* | v1.0.0.5   |                 | 1               | 1.0.0.6         | we support 4-part versions (non-semver) |
 
 - in case a),b) we are resolving the wildcard based on # of commits on top of the tag
    - run `git log` to identify # of commits
@@ -186,6 +187,7 @@ When the plugin is applied to the project it will:
 
 - in case d),e) use '0' as patch version
 - in case g) the user manually specified the version on the command line
+- in case e) we support 4-part versions like 1.2.3.4 (note that those versions are not semver compatible)
 
 ### When releasing every tag
 
@@ -202,13 +204,13 @@ When tag does not match the convention (`tagPrefix`) the plugin picks fallback v
 
 #### Examples:
 
-| case | version.properties        | checked out on  | -Pversion=      | result
-|------|---------------------------|-----------------|-----------------|------------------------------------------------------
-| h    | (empty/missing)           | v1.0.5          |                 | 1.0.5 (no 'tagPrefix' specified, default is 'v')
-| i    | tagPrefix=ver-            | ver-1.0.5       |                 | 1.0.5 ('tagPrefix' matches the tag)
-| j    | (empty/missing)           | v1.0.5-2-sha123 |                 | 1.0.6-SNAPSHOT (ahead of "v1.0.5" tag)
-| k    | tagPrefix=                | v1.0.5          |                 | 0.0.1-SNAPSHOT (empty tag prefix doesn't match 'v')
-| l    | (empty/missing)           | v1.0.2          | 1.0.5-SNAPSHOT  | 1.0.5-SNAPSHOT (version overridden from CLI argument)
+| case | version.properties        | checked out on  | -Pversion=      | result                                               |
+|------|---------------------------|-----------------|-----------------|------------------------------------------------------|
+| h    | (empty/missing)           | v1.0.5          |                 | 1.0.5 (no 'tagPrefix' specified, default is 'v')     |
+| i    | tagPrefix=ver-            | ver-1.0.5       |                 | 1.0.5 ('tagPrefix' matches the tag)                  |
+| j    | (empty/missing)           | v1.0.5-2-sha123 |                 | 1.0.6-SNAPSHOT (ahead of "v1.0.5" tag)               |
+| k    | tagPrefix=                | v1.0.5          |                 | 0.0.1-SNAPSHOT (empty tag prefix doesn't match 'v')  |
+| l    | (empty/missing)           | v1.0.2          | 1.0.5-SNAPSHOT  | 1.0.5-SNAPSHOT (version overridden from CLI argument)|
 
 ## Similar plugins
 
