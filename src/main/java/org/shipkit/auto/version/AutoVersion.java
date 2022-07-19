@@ -29,16 +29,16 @@ class AutoVersion {
     }
 
     /**
-     * Deduct version based on existing tags (will run 'git tag'), and the version spec from versionFile field.
+     * Deduce version based on existing tags (will run 'git tag'), and the version spec from versionFile field.
      *
      * @param projectVersion the version of the gradle project before running the plugin
      */
-    DeductedVersion deductVersion(String projectVersion) {
-        return deductVersion(LOG, projectVersion);
+    DeducedVersion deduceVersion(String projectVersion) {
+        return deduceVersion(LOG, projectVersion);
     }
 
     //Exposed for testing so that 'log' can be mocked
-    DeductedVersion deductVersion(Logger log, String projectVersion) {
+    DeducedVersion deduceVersion(Logger log, String projectVersion) {
         Optional<VersionNumber> previousVersion = Optional.empty();
         VersionConfig config = VersionConfig.parseVersionFile(versionFile);
 
@@ -59,13 +59,13 @@ class AutoVersion {
 
             logPreviousVersion(log, previousVersion);
 
-            return new DeductedVersion(nextVersion, previousVersion, config.getTagPrefix());
+            return new DeducedVersion(nextVersion, previousVersion, config.getTagPrefix());
         } catch (Exception e) {
             String message = "caught an exception, falling back to reasonable default";
             log.debug("shipkit-auto-version " + message, e);
             String v = config.getVersionSpec().orElse("0.0.1-SNAPSHOT").replace("*", "unspecified");
             explainVersion(log, v, message + "\n  - run with --debug for more info");
-            return new DeductedVersion(v, previousVersion, config.getTagPrefix());
+            return new DeducedVersion(v, previousVersion, config.getTagPrefix());
         }
     }
 

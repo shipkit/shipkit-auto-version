@@ -76,7 +76,7 @@ class VersionConfigTest extends TmpFolderSpecification {
         'v1.0.0-rc' | 'v'        | false
     }
 
-    def "tags are not annotated and snapshots can be deducted"() {
+    def "tags are not annotated and snapshots can be deduced"() {
         expect:
         isSnapshot(tag, tagPrefix) == result
 

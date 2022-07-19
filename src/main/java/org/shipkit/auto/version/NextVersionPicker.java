@@ -48,14 +48,14 @@ class NextVersionPicker {
 
             if (isSupportedVersion(tag, config.getTagPrefix())) {
                 result = tag.substring(config.getTagPrefix().length());
-                explainVersion(log, result, "deducted version based on tag: '" + tag + "'");
+                explainVersion(log, result, "deduced version based on tag: '" + tag + "'");
             } else if (isSnapshot(tag, config.getTagPrefix())) {
                 Pattern pattern = Pattern.compile("\\d+\\.\\d+\\.\\d+(\\.\\d+)?");
                 Matcher matcher = pattern.matcher(tag);
                 matcher.find();
                 result = new VersionNumber(matcher.group()).incrementBy(1).toString() + "-SNAPSHOT";
                 explainVersion(log, result,
-                        "deducted snapshot based on tag: '" + config.getTagPrefix() + matcher.group() + "'");
+                        "deduced snapshot based on tag: '" + config.getTagPrefix() + matcher.group() + "'");
             } else {
                 result = "0.0.1-SNAPSHOT";
                 explainVersion(log, result, "found no version property and the code is not checked out on a valid tag");
@@ -76,7 +76,7 @@ class NextVersionPicker {
                     "git", "log", "--pretty=oneline", TagConvention.tagFor(prev.toString(), config.getTagPrefix()) + "..HEAD");
             int commitCount = new CommitCounter().countCommitDelta(gitOutput);
             String result = prev.incrementBy(commitCount).toString();
-            explainVersion(log, result, "deducted version based on previous tag: '" + prev + "'");
+            explainVersion(log, result, "deduced version based on previous tag: '" + prev + "'");
             return result;
         } else {
             String result = config.newPatchVersion();

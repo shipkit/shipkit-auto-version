@@ -22,7 +22,7 @@ class AutoVersionTest extends TmpFolderSpecification {
         runner.run("git", "tag") >> "v1.0.1"
 
         when:
-        def v = autoVersion.deductVersion(log, Project.DEFAULT_VERSION)
+        def v = autoVersion.deduceVersion(log, Project.DEFAULT_VERSION)
 
         then:
         v.version == "1.1.0"
@@ -36,19 +36,19 @@ class AutoVersionTest extends TmpFolderSpecification {
         runner.run("git", "describe", "--tags") >> "v1.0.5"
 
         when:
-        def v = autoVersion.deductVersion(log, Project.DEFAULT_VERSION)
+        def v = autoVersion.deduceVersion(log, Project.DEFAULT_VERSION)
 
         then:
         v.version == "1.0.5"
         v.previousVersion == "1.0.4"
     }
 
-    def "no build failure when deducting versions fails"() {
+    def "no build failure when deducing versions fails"() {
         versionFile << "version=1.0.*"
         runner.run("git", "tag") >> "v1.0.1"
 
         when:
-        def v = autoVersion.deductVersion(log, Project.DEFAULT_VERSION)
+        def v = autoVersion.deduceVersion(log, Project.DEFAULT_VERSION)
 
         then:
         v.version == "1.0.unspecified"
@@ -59,13 +59,13 @@ class AutoVersionTest extends TmpFolderSpecification {
                 "  - run with --debug for more info")
     }
 
-    def "no build failure when no version config present and deducting versions fails"() {
+    def "no build failure when no version config present and deducing versions fails"() {
         runner.run("git", "tag") >> {
             throw new Exception()
         }
 
         when:
-        def v = autoVersion.deductVersion(log, Project.DEFAULT_VERSION)
+        def v = autoVersion.deduceVersion(log, Project.DEFAULT_VERSION)
 
         then:
         v.version == "0.0.1-SNAPSHOT"

@@ -76,7 +76,7 @@ some commit #2
         then:
         v == "1.0.2"
         1 * log.lifecycle("Building version '1.0.2'\n" +
-                "  - reason: shipkit-auto-version deducted version based on previous tag: '1.0.0'")
+                "  - reason: shipkit-auto-version deduced version based on previous tag: '1.0.0'")
     }
 
     def "picks version when no tag prefix"() {

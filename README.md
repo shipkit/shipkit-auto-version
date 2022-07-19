@@ -18,7 +18,7 @@ Encourage and help software developers set up their releases to be fully automat
 
 # shipkit-auto-version Gradle Plugin
 
-Our Gradle plugin ```shipkit-auto-version``` deducts the version for the Gradle project to streamline automation and continuous delivery of your code.
+Our Gradle plugin ```shipkit-auto-version``` deduces the version for the Gradle project to streamline automation and continuous delivery of your code.
 The idea is to infer the version from tags or from an optional `version.properties` file with a version spec like `1.0.*`.
 This way, you don't need to do any "version bump" commits in every release!
 This project is inspired on [Axion plugin](https://github.com/allegro/axion-release-plugin), and few others, listed later in this document.
