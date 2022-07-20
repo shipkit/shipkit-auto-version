@@ -115,7 +115,7 @@ class VersionConfig {
     }
 
     /**
-     * Informs if given tag is supported and if snapshot can be deducted
+     * Informs if given tag is supported and if snapshot can be deduced
      * as the tag is not an annotated tag
      *
      * @return true for tags like 'v1.0.0-1-sha1234', '2.33.444-15-dgo4d29u'

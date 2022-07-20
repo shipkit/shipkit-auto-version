@@ -5,15 +5,15 @@ import java.util.Objects;
 import java.util.Optional;
 
 /**
- * Value object representing the deducted version
+ * Value object representing the deduced version
  */
-class DeductedVersion {
+class DeducedVersion {
 
     private final String version;
     private final String previousVersion;
     private final String previousTag;
 
-    DeductedVersion(String version, Optional<VersionNumber> previousVersion, String tagPrefix) {
+    DeducedVersion(String version, Optional<VersionNumber> previousVersion, String tagPrefix) {
         Objects.requireNonNull(version, "version cannot be null");
         this.version = version;
         this.previousVersion = previousVersion.map(VersionNumber::toString).orElse(null);
@@ -21,7 +21,7 @@ class DeductedVersion {
     }
 
     /**
-     * Deducted version, never null.
+     * Deduced version, never null.
      */
     String getVersion() {
         return version;

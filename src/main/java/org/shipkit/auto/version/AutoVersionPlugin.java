@@ -9,7 +9,7 @@ import org.gradle.api.Project;
 public class AutoVersionPlugin implements Plugin<Project> {
 
     public void apply(Project project) {
-        DeductedVersion version = new AutoVersion(project.getProjectDir()).deductVersion(project.getVersion().toString());
+        DeducedVersion version = new AutoVersion(project.getProjectDir()).deduceVersion(project.getVersion().toString());
         project.allprojects(p -> p.setVersion(version.getVersion()));
         project.getExtensions().getExtraProperties().set("shipkit-auto-version.previous-version", version.getPreviousVersion());
         project.getExtensions().getExtraProperties().set("shipkit-auto-version.previous-tag", version.getPreviousTag());
