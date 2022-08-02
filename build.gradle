@@ -29,7 +29,7 @@ dependencies {
 
     testImplementation "org.spockframework:spock-core:1.3-groovy-2.5"
     testImplementation "cglib:cglib-nodep:3.3.0" //mocking concrete classes with spock
-    testImplementation "org.objenesis:objenesis:3.2" //as above
+    testImplementation "org.objenesis:objenesis:3.3" //as above
 }
 
 apply from: "$rootDir/gradle/release.gradle"
