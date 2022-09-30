@@ -70,7 +70,7 @@ plugins {
 2. Configure and use the plugin in a preferred way.
    
    \
-   __If you release relese every change__
+   __If you release every change__
    
    Create `version.properties` file and drop it to your project root.
    The contents should contain the version spec, and optionally, the tag prefix.
