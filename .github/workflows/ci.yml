@@ -21,7 +21,7 @@ jobs:
       with:
         fetch-depth: '0'  # https://github.com/shipkit/shipkit-auto-version#fetch-depth-on-ci
     - name: Gradle wrapper validation
-      uses: gradle/wrapper-validation-action@v1.0.4
+      uses: gradle/wrapper-validation-action@v1.0.5
 
   windows_build:
     if: "! contains(toJSON(github.event.commits.*.message), '[skip ci]')"
