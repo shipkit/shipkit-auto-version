@@ -6,22 +6,15 @@ apply plugin: "org.shipkit.shipkit-github-release"
 
 // docs: https://plugins.gradle.org/docs/publish-plugin
 gradlePlugin {
-    plugins {
-        autoVersion {
-            id = 'org.shipkit.shipkit-auto-version'
-            implementationClass = 'org.shipkit.auto.version.AutoVersionPlugin'
-        }
-    }
-}
-
-pluginBundle {
     website = 'https://github.com/shipkit/org.shipkit.shipkit-auto-version'
     vcsUrl = 'https://github.com/shipkit/org.shipkit.shipkit-auto-version.git'
     plugins {
         autoVersion {
+            id = 'org.shipkit.shipkit-auto-version'
+            implementationClass = 'org.shipkit.auto.version.AutoVersionPlugin'
             displayName = 'Shipkit auto-version plugin'
             description = 'Increments version automatically for easy releases from CI'
-            tags = ['ci', 'shipkit', 'releases']
+            tags.addAll('ci', 'shipkit', 'releases')
         }
     }
 }
