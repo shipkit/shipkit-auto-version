@@ -30,7 +30,7 @@ dependencies {
     testImplementation "org.spockframework:spock-core:2.3-groovy-3.0"
     testImplementation "org.spockframework:spock-junit4:2.3-groovy-3.0"
     testImplementation "cglib:cglib-nodep:3.3.0" //mocking concrete classes with spock
-    testImplementation "org.objenesis:objenesis:3.3" //as above
+    testImplementation "org.objenesis:objenesis:3.4" //as above
 }
 
 tasks.withType(Test).configureEach { testTask ->
