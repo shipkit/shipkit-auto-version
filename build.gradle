@@ -28,8 +28,15 @@ dependencies {
     testImplementation 'junit:junit:4.13.2'
 
     testImplementation "org.spockframework:spock-core:2.3-groovy-3.0"
+    testImplementation "org.spockframework:spock-junit4:2.3-groovy-3.0"
     testImplementation "cglib:cglib-nodep:3.3.0" //mocking concrete classes with spock
     testImplementation "org.objenesis:objenesis:3.3" //as above
+}
+
+tasks.withType(Test).configureEach { testTask ->
+    testTask.configure {
+        useJUnitPlatform()
+    }
 }
 
 apply from: "$rootDir/gradle/release.gradle"

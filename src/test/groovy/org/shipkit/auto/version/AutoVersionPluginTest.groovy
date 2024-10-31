@@ -16,7 +16,7 @@ class AutoVersionPluginTest extends Specification {
         def runner = new ProcessRunner(project.projectDir)
 
         //prepare repo
-        runner.run("git", "init")
+        runner.run("git", "init", "--initial-branch=main")
         runner.run("git", "config", "user.email", "dummy@testing.com")
         runner.run("git", "config", "user.name", "Dummy For Testing")
 
@@ -29,7 +29,7 @@ class AutoVersionPluginTest extends Specification {
         runner.run("git", "commit", "--allow-empty", "-m", "PR-10 - 1")
         runner.run("git", "commit", "--allow-empty", "-m", "PR-10 - 2")
 
-        runner.run("git", "checkout", "master")
+        runner.run("git", "checkout", "main")
         runner.run("git", "merge", "PR-10", "--no-ff", "-m", "Merge pull request #10 from ...")
 
         when:
