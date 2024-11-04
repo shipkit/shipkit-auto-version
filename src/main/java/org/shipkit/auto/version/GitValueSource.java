@@ -1,12 +1,11 @@
 package org.shipkit.auto.version;
 
+import static java.lang.String.join;
 import java.io.ByteArrayOutputStream;
-
 import java.io.File;
 
 import javax.inject.Inject;
 
-import static java.lang.String.join;
 import org.gradle.api.provider.ValueSource;
 import org.gradle.process.ExecOperations;
 import org.gradle.process.ExecResult;

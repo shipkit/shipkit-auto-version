@@ -38,7 +38,7 @@ class NextVersionPicker {
             String result;
 
             try {
-                org.gradle.api.provider.Provider<String> tagDescriptionProvider = gitValueSourceProviderFactory.getProvider(new String[]{"describe", "--tags"});
+                Provider<String> tagDescriptionProvider = gitValueSourceProviderFactory.getProvider(new String[]{"describe", "--tags"});
                 tag = tagDescriptionProvider.get().trim();
             } catch (Exception e) {
                 result = "0.0.1-SNAPSHOT";

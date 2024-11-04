@@ -1,13 +1,10 @@
 package org.shipkit.auto.version;
 
-import java.io.File;
 import java.util.Collection;
 import java.util.Set;
 import java.util.TreeSet;
 
-import org.gradle.api.logging.Logger;
 import org.gradle.api.provider.Provider;
-import org.gradle.api.provider.ProviderFactory;
 
 import static org.shipkit.auto.version.VersionConfig.isSupportedVersion;
 

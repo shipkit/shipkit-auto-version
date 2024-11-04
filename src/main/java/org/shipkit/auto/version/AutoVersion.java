@@ -1,12 +1,11 @@
 package org.shipkit.auto.version;
 
+import org.gradle.api.logging.Logger;
+import org.gradle.api.logging.Logging;
+
 import java.io.File;
 import java.util.Collection;
 import java.util.Optional;
-
-import org.gradle.api.logging.Logger;
-import org.gradle.api.logging.Logging;
-import org.gradle.api.provider.ProviderFactory;
 
 import static org.shipkit.auto.version.NextVersionPicker.explainVersion;
 
@@ -15,7 +14,7 @@ import static org.shipkit.auto.version.NextVersionPicker.explainVersion;
  */
 class AutoVersion {
 
-    final static Logger LOG = Logging.getLogger(AutoVersion.class);
+    private final static Logger LOG = Logging.getLogger(AutoVersion.class);
 
     private final GitValueSourceProviderFactory gitValueSourceProviderFactory;
     private final File versionFile;
@@ -48,7 +47,7 @@ class AutoVersion {
                 previousVersion = previousVersionFinder.findPreviousVersion(versions, config);
             }
 
-            NextVersionPicker nextVersionPicker = new NextVersionPicker(gitValueSourceProviderFactory, LOG);
+            NextVersionPicker nextVersionPicker = new NextVersionPicker(gitValueSourceProviderFactory, log);
             String nextVersion = nextVersionPicker.pickNextVersion(previousVersion,
                     config, projectVersion);
 
