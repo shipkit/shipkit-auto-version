@@ -1,8 +1,13 @@
 package org.shipkit.auto.version;
 
+import java.io.File;
 import java.util.Collection;
 import java.util.Set;
 import java.util.TreeSet;
+
+import org.gradle.api.logging.Logger;
+import org.gradle.api.provider.Provider;
+import org.gradle.api.provider.ProviderFactory;
 
 import static org.shipkit.auto.version.VersionConfig.isSupportedVersion;
 
@@ -10,10 +15,11 @@ import static org.shipkit.auto.version.VersionConfig.isSupportedVersion;
  * Finds versions based on tags, finds tags by running Git command
  */
 class VersionsProvider {
-    private final ProcessRunner runner;
 
-    VersionsProvider(ProcessRunner runner) {
-        this.runner = runner;
+    private final GitValueSourceProviderFactory gitValueSourceProviderFactory;
+
+    public VersionsProvider(GitValueSourceProviderFactory gitValueSourceProviderFactory) {
+        this.gitValueSourceProviderFactory = gitValueSourceProviderFactory;
     }
 
     /**
@@ -22,7 +28,10 @@ class VersionsProvider {
      * @param tagPrefix tag prefix
      */
     Collection<VersionNumber> getAllVersions(String tagPrefix) {
-        String gitOutput = runner.run("git", "tag");
+
+        Provider<String> gitTagProvider = gitValueSourceProviderFactory.getProvider(new String[]{"tag"});
+
+        String gitOutput = gitTagProvider.get();
         String[] tagOutput = gitOutput.split("\\R");
 
         Set<VersionNumber> result = new TreeSet<>();

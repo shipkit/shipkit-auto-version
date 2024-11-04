@@ -2,6 +2,7 @@ package org.shipkit.auto.version;
 
 import org.gradle.api.Project;
 import org.gradle.api.logging.Logger;
+import org.gradle.api.provider.Provider;
 
 import java.util.Optional;
 import java.util.regex.Matcher;
@@ -14,11 +15,12 @@ import static org.shipkit.auto.version.VersionConfig.isSnapshot;
  * Picks the next version to use.
  */
 class NextVersionPicker {
-    private final ProcessRunner runner;
-    private final Logger log;
 
-    NextVersionPicker(ProcessRunner runner, Logger log) {
-        this.runner = runner;
+    private final Logger log;
+    private final GitValueSourceProviderFactory gitValueSourceProviderFactory;
+
+    public NextVersionPicker(GitValueSourceProviderFactory gitValueSourceProviderFactory, Logger log) {
+        this.gitValueSourceProviderFactory = gitValueSourceProviderFactory;
         this.log = log;
     }
 
@@ -36,7 +38,8 @@ class NextVersionPicker {
             String result;
 
             try {
-                tag = runner.run("git", "describe", "--tags").trim();
+                org.gradle.api.provider.Provider<String> tagDescriptionProvider = gitValueSourceProviderFactory.getProvider(new String[]{"describe", "--tags"});
+                tag = tagDescriptionProvider.get().trim();
             } catch (Exception e) {
                 result = "0.0.1-SNAPSHOT";
                 log.info("Process 'git describe --tags' exited with non-zero exit value. Assuming there are no tags. " +
@@ -65,15 +68,16 @@ class NextVersionPicker {
         }
 
         if (!config.isWildcard()) {
-            //if there is no wildcard we will use the version 'as is'
+            // if there is no wildcard we will use the version 'as is'
             explainVersion(log, config.getVersionSpec().get(), "uses verbatim version from version file");
             return config.getVersionSpec().get();
         }
 
         if (previousVersion.isPresent() && previousVersion.get().satisfies(config.getVersionSpec().get())) {
             VersionNumber prev = previousVersion.get();
-            String gitOutput = runner.run(
-                    "git", "log", "--pretty=oneline", TagConvention.tagFor(prev.toString(), config.getTagPrefix()) + "..HEAD");
+            String[] params = { "log", "--pretty=oneline", TagConvention.tagFor(prev.toString(), config.getTagPrefix()) + "..HEAD" };
+            Provider<String> prettyLogProvider = gitValueSourceProviderFactory.getProvider(params);
+            String gitOutput = prettyLogProvider.get();
             int commitCount = new CommitCounter().countCommitDelta(gitOutput);
             String result = prev.incrementBy(commitCount).toString();
             explainVersion(log, result, "deduced version based on previous tag: '" + prev + "'");

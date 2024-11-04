@@ -1,26 +1,29 @@
 package org.shipkit.auto.version
 
-
+import org.gradle.api.provider.Provider
 import spock.lang.Specification
 
 class VersionsProviderTest extends Specification {
 
-    ProcessRunner runner = Mock()
-    VersionsProvider provider
+    GitValueSourceProviderFactory gitValueSourceProviderFactory = Mock(GitValueSourceProviderFactory)
+    Provider<String> provider = Mock()
+    VersionsProvider versionsProvider
 
     def setup() {
-        provider = new VersionsProvider(runner)
+        versionsProvider = new VersionsProvider(gitValueSourceProviderFactory)
     }
 
     def "returns empty collection when no tags"() {
-        runner.run("git", "tag") >> ""
+        gitValueSourceProviderFactory.getProvider(["tag"]) >> provider
+        provider.get() >> ""
 
         expect:
-        provider.getAllVersions("v").isEmpty()
+        versionsProvider.getAllVersions("v").isEmpty()
     }
 
     def "gets all versions from tags"() {
-        runner.run("git", "tag") >> """
+        gitValueSourceProviderFactory.getProvider(["tag"]) >> provider
+        provider.get() >> """
             v1.0.1
             v1.0.2
             v2.0.0
@@ -34,11 +37,12 @@ class VersionsProviderTest extends Specification {
         """
 
         expect:
-        provider.getAllVersions("v").toString() == "[1.0.0.0, 1.0.1, 1.0.2, 2.0.0, 22.333.4444]"
+        versionsProvider.getAllVersions("v").toString() == "[1.0.0.0, 1.0.1, 1.0.2, 2.0.0, 22.333.4444]"
     }
 
     def "gets all versions when no tag prefix"() {
-        runner.run("git", "tag") >> """
+        gitValueSourceProviderFactory.getProvider(["tag"]) >> provider
+        provider.get() >> """
             1.0.1
             1.0.2
             foo
@@ -46,6 +50,6 @@ class VersionsProviderTest extends Specification {
         """
 
         expect:
-        provider.getAllVersions("").toString() == "[1.0.1, 1.0.2]"
+        versionsProvider.getAllVersions("").toString() == "[1.0.1, 1.0.2]"
     }
 }
