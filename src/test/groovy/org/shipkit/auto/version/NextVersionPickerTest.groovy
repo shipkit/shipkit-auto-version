@@ -1,19 +1,22 @@
 package org.shipkit.auto.version
 
-import com.github.zafarkhaja.semver.Version
 import org.gradle.api.Project
 import org.gradle.api.logging.Logger
+import org.gradle.api.provider.Provider
 import spock.lang.Specification
+
 
 class NextVersionPickerTest extends Specification {
 
-    ProcessRunner runner = Mock()
-    NextVersionPicker picker
     Logger log = Mock()
+    GitValueSourceProviderFactory gitValueSourceProviderFactory = Mock(GitValueSourceProviderFactory)
+    Provider<String> provider = Mock()
+    NextVersionPicker picker
 
     def setup() {
-        picker = new NextVersionPicker(runner, log)
+        picker = new NextVersionPicker(gitValueSourceProviderFactory, log)
     }
+
 
     def "picks version as configured on the Gradle project"() {
         when:
@@ -62,7 +65,8 @@ class NextVersionPickerTest extends Specification {
     }
 
     def "picks incremented version"() {
-        runner.run("git", "log", "--pretty=oneline", "v1.0.0..HEAD") >> """
+        gitValueSourceProviderFactory.getProvider(["log", "--pretty=oneline", "v1.0.0..HEAD"] as String[]) >> provider
+        provider.get() >> """
 some commit #1
 some commit #2
 """
@@ -80,10 +84,11 @@ some commit #2
     }
 
     def "picks version when no tag prefix"() {
-        runner.run("git", "log", "--pretty=oneline", "1.0.0..HEAD") >> """
+        gitValueSourceProviderFactory.getProvider(["log", "--pretty=oneline", "1.0.0..HEAD"] as String[]) >> provider
+        provider.get() >> """
 some commit
 """
-
+        
         when:
         def v = picker.pickNextVersion(
                 Optional.of(new VersionNumber("1.0.0")),
@@ -95,11 +100,12 @@ some commit
     }
 
     def "picks version when no config file and not checked out on tag"() {
-        runner.run("git", "describe", "--tags") >> "v1.1.0-1-sha12345"
+        gitValueSourceProviderFactory.getProvider(["describe", "--tags"] as String[]) >> provider
+        provider.get() >> "v1.1.0-1-sha12345"
 
         when:
         def v = picker.pickNextVersion(Optional.empty(),
-                new VersionConfig(null,"v"),
+                new VersionConfig(null, "v"),
                 Project.DEFAULT_VERSION)
 
         then:
@@ -107,11 +113,12 @@ some commit
     }
 
     def "picks 4-part version when no config file and not checked out on tag"() {
-        runner.run("git", "describe", "--tags") >> "v1.2.3.4-1-sha12345"
+        gitValueSourceProviderFactory.getProvider(["describe", "--tags"] as String[]) >> provider
+        provider.get() >> "v1.2.3.4-1-sha12345"
 
         when:
         def v = picker.pickNextVersion(Optional.empty(),
-                new VersionConfig(null,"v"),
+                new VersionConfig(null, "v"),
                 Project.DEFAULT_VERSION)
 
         then:
@@ -119,11 +126,12 @@ some commit
     }
 
     def "picks version when no config file and checked out on tag"() {
-        runner.run("git", "describe", "--tags") >> "v1.1.0"
+        gitValueSourceProviderFactory.getProvider(["describe", "--tags"] as String[]) >> provider
+        provider.get() >> "v1.1.0"
 
         when:
         def v = picker.pickNextVersion(Optional.empty(),
-                new VersionConfig(null,"v"),
+                new VersionConfig(null, "v"),
                 Project.DEFAULT_VERSION)
 
         then:
@@ -131,11 +139,12 @@ some commit
     }
 
     def "picks version when no config file and checked out on not valid tag"() {
-        runner.run("git", "describe", "--tags") >> "ver-1.1.0"
+        gitValueSourceProviderFactory.getProvider(["describe", "--tags"] as String[]) >> provider
+        provider.get() >> "ver-1.1.0"
 
         when:
         def v = picker.pickNextVersion(Optional.empty(),
-                new VersionConfig(null,"v"),
+                new VersionConfig(null, "v"),
                 Project.DEFAULT_VERSION)
 
         then:
@@ -143,13 +152,14 @@ some commit
     }
 
     def "picks version when no tags found in project"() {
-        runner.run("git", "describe", "--tags") >> {
+        gitValueSourceProviderFactory.getProvider(["describe", "--tags"] as String[]) >> provider
+        provider.get() >> {
             throw new ShipkitAutoVersionException("Problems executing command")
         }
 
         when:
         def v = picker.pickNextVersion(Optional.empty(),
-                new VersionConfig(null,"v"),
+                new VersionConfig(null, "v"),
                 Project.DEFAULT_VERSION)
 
         then:

@@ -16,16 +16,12 @@ class AutoVersion {
 
     private final static Logger LOG = Logging.getLogger(AutoVersion.class);
 
-    private final ProcessRunner runner;
+    private final GitValueSourceProviderFactory gitValueSourceProviderFactory;
     private final File versionFile;
 
-    AutoVersion(ProcessRunner runner, File versionFile) {
-        this.runner = runner;
+    AutoVersion(GitValueSourceProviderFactory gitValueSourceProviderFactory, File versionFile) {
         this.versionFile = versionFile;
-    }
-
-    AutoVersion(File projectDir) {
-        this(new ProcessRunner(projectDir), new File(projectDir, "version.properties"));
+        this.gitValueSourceProviderFactory = gitValueSourceProviderFactory;
     }
 
     /**
@@ -43,14 +39,16 @@ class AutoVersion {
         VersionConfig config = VersionConfig.parseVersionFile(versionFile);
 
         try {
-            Collection<VersionNumber> versions = new VersionsProvider(runner).getAllVersions(config.getTagPrefix());
+            VersionsProvider versionsProvider = new VersionsProvider(gitValueSourceProviderFactory);
+            Collection<VersionNumber> versions = versionsProvider.getAllVersions(config.getTagPrefix());
             PreviousVersionFinder previousVersionFinder = new PreviousVersionFinder();
 
             if (config.getVersionSpec().isPresent()) {
                 previousVersion = previousVersionFinder.findPreviousVersion(versions, config);
             }
 
-            String nextVersion = new NextVersionPicker(runner, log).pickNextVersion(previousVersion,
+            NextVersionPicker nextVersionPicker = new NextVersionPicker(gitValueSourceProviderFactory, log);
+            String nextVersion = nextVersionPicker.pickNextVersion(previousVersion,
                     config, projectVersion);
 
             if (!config.getVersionSpec().isPresent()) {
